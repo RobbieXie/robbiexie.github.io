@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="目录 Git分支管理规范  常用分支说明 操作流程实例   设计规范  前言  阿里设计规约  本组UML图示例    阿里巴巴Java开发规范解读   Git分支管理规范常用分支说明master分支: 线上版本分支, 对应线上的每一个版本, 用tag标记 保护分支, 不允许在该分支直接提代码 稳定长期存在  develop分支: 开发分支, 包含所有最新功能和代码, 所有开发基于此分支进行 保护">
+<meta property="og:type" content="article">
+<meta property="og:title" content="编程规范">
+<meta property="og:url" content="https://robbiexie.github.io/2022/03/18/coding-guidelines/index.html">
+<meta property="og:site_name" content="RobbieXie&#39;s Blog">
+<meta property="og:description" content="目录 Git分支管理规范  常用分支说明 操作流程实例   设计规范  前言  阿里设计规约  本组UML图示例    阿里巴巴Java开发规范解读   Git分支管理规范常用分支说明master分支: 线上版本分支, 对应线上的每一个版本, 用tag标记 保护分支, 不允许在该分支直接提代码 稳定长期存在  develop分支: 开发分支, 包含所有最新功能和代码, 所有开发基于此分支进行 保护">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/18/coding-guidelines/git-0.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/18/coding-guidelines/git-1-1.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/18/coding-guidelines/git-1.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/18/coding-guidelines/git-miss.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/18/coding-guidelines/git-3.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/18/coding-guidelines/git-4.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/18/coding-guidelines/git-5.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/18/coding-guidelines/design-1.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/18/coding-guidelines/design1.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/18/coding-guidelines/design2.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/18/coding-guidelines/design3.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/18/coding-guidelines/design4.png">
+<meta property="article:published_time" content="2022-03-18T08:51:43.524Z">
+<meta property="article:modified_time" content="2022-03-18T10:33:29.790Z">
+<meta property="article:author" content="谢天帝">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://robbiexie.github.io/2022/03/18/coding-guidelines/git-0.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://robbiexie.github.io/2022/03/18/coding-guidelines/"/>
+
+
+
+
+
+  <title>编程规范 | RobbieXie's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">RobbieXie's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://robbiexie.github.io/2022/03/18/coding-guidelines/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="RobbieXie's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">编程规范</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2022-03-18T16:51:43+08:00">
+                2022-03-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ul>
+<li><p>Git分支管理规范</p>
+<ul>
+<li>常用分支说明</li>
+<li>操作流程实例</li>
+</ul>
+</li>
+<li><p>设计规范</p>
+<ul>
+<li><p>前言</p>
+</li>
+<li><p>阿里设计规约</p>
+</li>
+<li><p>本组UML图示例</p>
+</li>
+</ul>
+</li>
+<li><p>阿里巴巴Java开发规范解读</p>
+</li>
+</ul>
+<h2 id="Git分支管理规范"><a href="#Git分支管理规范" class="headerlink" title="Git分支管理规范"></a>Git分支管理规范</h2><h3 id="常用分支说明"><a href="#常用分支说明" class="headerlink" title="常用分支说明"></a>常用分支说明</h3><h4 id="master分支"><a href="#master分支" class="headerlink" title="master分支:"></a>master分支:</h4><ul>
+<li>线上版本分支, 对应线上的每一个版本, 用tag标记</li>
+<li>保护分支, 不允许在该分支直接提代码</li>
+<li>稳定长期存在</li>
+</ul>
+<h4 id="develop分支"><a href="#develop分支" class="headerlink" title="develop分支:"></a>develop分支:</h4><ul>
+<li>开发分支, 包含所有最新功能和代码, 所有开发基于此分支进行</li>
+<li>保护分支, 不允许直接在该分支提代码</li>
+<li>开发新功能时, 基于最新的develop分支切出自己的feature分支进行</li>
+<li>稳定长期存在</li>
+</ul>
+<h4 id="feature-amp-fix分支"><a href="#feature-amp-fix分支" class="headerlink" title="feature &amp; fix分支:"></a>feature &amp; fix分支:</h4><ul>
+<li>新功能分支,  或修复BUG分支, 通常对应Sprint中的一个特定任务</li>
+<li>分支命名用 feature-xxx 或 fix-xxx 开头,且有意义的词汇构成</li>
+<li>comment 包含Sprint中对应任务id 及此分支功能描述</li>
+<li>开发完成后, 提交PR(pull request) 到 origin develop分支,  PR merge到develop分支后并删除此分支</li>
+</ul>
+<h4 id="release分支"><a href="#release分支" class="headerlink" title="release分支:"></a>release分支:</h4><ul>
+<li>发布分支, 准备上线版本时 使用的分支. </li>
+<li>准备发布新版本时，从develop 切出一个 release 分支，来做发布前的准备</li>
+<li>在修复线上紧急BUG时, 从 master 切出一个 release(hotfix)分支, 来做发布前的准备</li>
+<li>release分支 测试发现的bug直接在 release分支进行修复, 上线后 合并至 master 分支 和 develop分支</li>
+<li>上线发布完成后, 可以选择删除release分支</li>
+</ul>
+<h3 id="操作流程示例"><a href="#操作流程示例" class="headerlink" title="操作流程示例"></a>操作流程示例</h3><ul>
+<li>两个长期分支:  master 和 develop.  日常开发中, 逐渐丰富develop分支功能 </li>
+</ul>
+<img src="./git-0.png" alt="image-20220316161954036" style="zoom:42%;" />
+
+<ul>
+<li>多人协作开发时,  提交PR前先在本地 pull并rebase最新的远端develop分支,   git pull origin develop –rebase;</li>
+</ul>
+<img src="./git-1-1.png" alt="image-20220318105311716" style="zoom:35%;" />
+
+<ul>
+<li>开发过程中准备一些新功能上线. 首先, 团队一起挑选出要上线的commit点</li>
+</ul>
+<img src="./git-1.png" alt="image-20220316160232302" style="zoom:50%;" />
+
+<ul>
+<li>从该commit切出release分支 , 发布到UAT环境 并交给测试和业务同事验证功能, 如符合预期 则使用该版本应用包上线. 上线完成后合并至 master 分支.</li>
+</ul>
+<img src="./git-miss.png" alt="image-20220316160610988" style="zoom:50%;" />
+
+<ul>
+<li>若该release分支测试时出了问题, 则直接在该分支修复问题. 知道符合预期后 发布生产, 并将新改动合并至master和develop分支.</li>
+</ul>
+<img src="./git-3.png" alt="image-20220316160903903" style="zoom:50%;" />
+
+<ul>
+<li>若从develop分支切release分支时, 有不想跟随本次上线的commit, 使用git cherry-pick精确选择要上线的commit, 从而产出符合预期的release分支.</li>
+</ul>
+<img src="./git-4.png" alt="image-20220316161230112" style="zoom:50%;" />
+
+<ul>
+<li>当生产环境出现要紧急修复的BUG时, 从线上对应的master分支commit 切出release分支, 修复bug后上线发布, 完成后合并至master和develop.</li>
+</ul>
+<img src="./git-5.png" alt="image-20220316161359901" style="zoom:50%;" />
+
+<h2 id="设计规范"><a href="#设计规范" class="headerlink" title="设计规范"></a>设计规范</h2><h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>此处谈不上是规范, 希望大家一起探讨,总结出工作中必要的一些设计及文档产出. </p>
+<ul>
+<li>比较复杂的需求开始前, 往往需要提前进行方案设计和评审, 那我们要评审些什么?  评审产出什么样的结果?<ul>
+<li>评估需求实现的技术方案&amp;细节&amp;可行性 -&gt; 如何描述技术方案?  </li>
+<li>方案带来的改动点 -&gt; 参与方对改动内容达成一致</li>
+<li>不同方案的优缺点&amp;成本 -&gt; 拍板确定实施方案</li>
+<li>优雅的设计细节 -&gt; 保证复用性和拓展性</li>
+<li>…</li>
+</ul>
+</li>
+<li>代码或项目开发完成后,  如何验证符合预期?  -&gt; 遵循文档约定</li>
+</ul>
+<h3 id="阿里设计规约"><a href="#阿里设计规约" class="headerlink" title="阿里设计规约"></a>阿里设计规约</h3><img src="/2022/03/18/coding-guidelines/design-1.png" class="" title="image-20220318111434810">
+
+<h3 id="本组UML图示例"><a href="#本组UML图示例" class="headerlink" title="本组UML图示例"></a>本组UML图示例</h3><p>我们组开发的一个电话系统</p>
+<h4 id="1-一通电话生命周期的状态图"><a href="#1-一通电话生命周期的状态图" class="headerlink" title="1. 一通电话生命周期的状态图:"></a>1. 一通电话生命周期的状态图:</h4><img src="/2022/03/18/coding-guidelines/design1.png" class="" title="image-20220318112715504">
+
+<h4 id="2-通话发起到接听的时序图"><a href="#2-通话发起到接听的时序图" class="headerlink" title="2. 通话发起到接听的时序图"></a>2. 通话发起到接听的时序图</h4><img src="/2022/03/18/coding-guidelines/design2.png" class="" title="image-20220318112918395">
+
+<h4 id="3-与协作方外部系统交互的-活动图"><a href="#3-与协作方外部系统交互的-活动图" class="headerlink" title="3. 与协作方外部系统交互的 活动图"></a>3. 与协作方外部系统交互的 活动图</h4><img src="./design3.png" alt="image-20220318113905621" style="zoom:55%;" />
+
+<h4 id="4-UAT测试环境各个服务间的部署图"><a href="#4-UAT测试环境各个服务间的部署图" class="headerlink" title="4. UAT测试环境各个服务间的部署图"></a>4. UAT测试环境各个服务间的部署图</h4><img src="/2022/03/18/coding-guidelines/design4.png" class="" title="image-20220318113430160">
+
+<h2 id="阿里巴巴-Java开发手册解读"><a href="#阿里巴巴-Java开发手册解读" class="headerlink" title="阿里巴巴 Java开发手册解读"></a>阿里巴巴 Java开发手册解读</h2><p>手册下载链接: <a target="_blank" rel="noopener" href="https://github.com/alibaba/p3c">https://github.com/alibaba/p3c</a></p>
+<h3 id="难点解读"><a href="#难点解读" class="headerlink" title="难点解读:"></a>难点解读:</h3><p>示例代码源码:  <a target="_blank" rel="noopener" href="https://github.com/RobbieXie/p3c_guideline_code_demo">https://github.com/RobbieXie/p3c_guideline_code_demo</a></p>
+<h5 id="命名规约-9-【强制】POJO-类中的任何布尔类型的变量，都不要加-is-前缀，否则部分框架解析会引起序列化错误。"><a href="#命名规约-9-【强制】POJO-类中的任何布尔类型的变量，都不要加-is-前缀，否则部分框架解析会引起序列化错误。" class="headerlink" title="命名规约-9: 【强制】POJO 类中的任何布尔类型的变量，都不要加 is 前缀，否则部分框架解析会引起序列化错误。"></a>命名规约-9: 【强制】POJO 类中的任何布尔类型的变量，都不要加 is 前缀，否则部分框架解析会引起序列化错误。</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">NameGuideline9</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> JsonProcessingException &#123;</span><br><span class="line">        <span class="type">Record</span> <span class="variable">record</span> <span class="operator">=</span> Record.builder()</span><br><span class="line">                .isDeleted(<span class="literal">true</span>)</span><br><span class="line">                .build();</span><br><span class="line"></span><br><span class="line">        <span class="type">ObjectMapper</span> <span class="variable">objectMapper</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectMapper</span>();</span><br><span class="line">        <span class="type">Gson</span> <span class="variable">gson</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Gson</span>();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// jackson默认输出 &#123;&quot;deleted&quot;:true&#125;</span></span><br><span class="line">        System.out.println(objectMapper.writeValueAsString(record));</span><br><span class="line">        <span class="comment">// gson默认输出 &#123;&quot;isDeleted&quot;:true&#125;</span></span><br><span class="line">        System.out.println(gson.toJson(record));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Data</span></span><br><span class="line">    <span class="meta">@Builder</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Record</span> &#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="type">boolean</span> isDeleted;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="集合规约-2-【强制】判断所有集合内部的元素是否为空，使用-isEmpty-方法，而不是-size-0-的方式。"><a href="#集合规约-2-【强制】判断所有集合内部的元素是否为空，使用-isEmpty-方法，而不是-size-0-的方式。" class="headerlink" title="集合规约-2: 【强制】判断所有集合内部的元素是否为空，使用 isEmpty() 方法，而不是 size() == 0 的方式。"></a>集合规约-2: 【强制】判断所有集合内部的元素是否为空，使用 isEmpty() 方法，而不是 size() == 0 的方式。</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 在某些集合中，前者的时间复杂度为 O(1)，而且可读性更好。</span></span><br><span class="line"><span class="comment">// 比如 ConcurrentLinkedQueue</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// size()方法</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">size</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (Node&lt;E&gt; p = first(); p != <span class="literal">null</span>; p = succ(p))</span><br><span class="line">            <span class="keyword">if</span> (p.item != <span class="literal">null</span>)</span><br><span class="line">                <span class="comment">// Collection.size() spec says to max out</span></span><br><span class="line">                <span class="keyword">if</span> (++count == Integer.MAX_VALUE)</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">return</span> count;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// isEmpty()方法</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">isEmpty</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> peekFirst() == <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="集合规约-3-amp-4-【强制】在使用-java-util-stream-Collectors-类的-toMap-方法转为-Map-集合时，一定要使用参数类型-为-BinaryOperator，参数名为-mergeFunction-的方法，否则当出现相同-key-时会抛出-IllegalStateException-异常。【强制】在使用-java-util-stream-Collectors-类的-toMap-方法转为-Map-集合时，一定要注意当-value-为-null-时会抛-NPE-异常。"><a href="#集合规约-3-amp-4-【强制】在使用-java-util-stream-Collectors-类的-toMap-方法转为-Map-集合时，一定要使用参数类型-为-BinaryOperator，参数名为-mergeFunction-的方法，否则当出现相同-key-时会抛出-IllegalStateException-异常。【强制】在使用-java-util-stream-Collectors-类的-toMap-方法转为-Map-集合时，一定要注意当-value-为-null-时会抛-NPE-异常。" class="headerlink" title="集合规约-3&amp;4: 【强制】在使用 java.util.stream.Collectors 类的 toMap() 方法转为 Map 集合时，一定要使用参数类型 为 BinaryOperator，参数名为 mergeFunction 的方法，否则当出现相同 key 时会抛出 IllegalStateException 异常。【强制】在使用 java.util.stream.Collectors 类的 toMap() 方法转为 Map 集合时，一定要注意当 value 为 null 时会抛 NPE 异常。"></a>集合规约-3&amp;4: 【强制】在使用 java.util.stream.Collectors 类的 toMap() 方法转为 Map 集合时，一定要使用参数类型 为 BinaryOperator，参数名为 mergeFunction 的方法，否则当出现相同 key 时会抛出 IllegalStateException 异常。【强制】在使用 java.util.stream.Collectors 类的 toMap() 方法转为 Map 集合时，一定要注意当 value 为 null 时会抛 NPE 异常。</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CollectionGuideline4</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        ArrayList&lt;User&gt; users = Lists.newArrayList(</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;xietiandi&quot;</span>, <span class="string">&quot;male&quot;</span>),</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;xietiandi&quot;</span>, <span class="string">&quot;male&quot;</span>),</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;xtd&quot;</span>, <span class="literal">null</span>)</span><br><span class="line">        );</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 因为有重复key value， 会抛出IllegalStateException异常</span></span><br><span class="line">        users.stream().collect(Collectors.toMap(User::getName, User::getSex));</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 因为有value为null的元素， 会抛出NPE</span></span><br><span class="line">        users.stream().collect(Collectors.toMap(User::getName, User::getSex, (v1, v2) -&gt; v2));</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 有重复元素且允许value为null时的正确写法</span></span><br><span class="line">        users.stream().collect(HashMap::<span class="keyword">new</span>,</span><br><span class="line">                (hashMap, user) -&gt; hashMap.put(user.getName(), user.getSex()),</span><br><span class="line">                HashMap::putAll).forEach((key, value) -&gt; System.out.println(key + <span class="string">&quot;:&quot;</span> + value));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@AllArgsConstructor</span></span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123;</span><br><span class="line">        <span class="keyword">private</span> String name;</span><br><span class="line">        <span class="keyword">private</span> String sex;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="集合规约-12-【强制】泛型通配符-lt-extends-T-gt-来接收返回的数据，此写法的泛型集合不能使用-add-方-而-lt-super-T-gt-不能使用-get-方法，两者在接口调用赋值的场景中容易出错。"><a href="#集合规约-12-【强制】泛型通配符-lt-extends-T-gt-来接收返回的数据，此写法的泛型集合不能使用-add-方-而-lt-super-T-gt-不能使用-get-方法，两者在接口调用赋值的场景中容易出错。" class="headerlink" title="集合规约-12:  【强制】泛型通配符&lt;? extends T&gt;来接收返回的数据，此写法的泛型集合不能使用 add 方 而&lt;? super T&gt;不能使用 get 方法，两者在接口调用赋值的场景中容易出错。"></a>集合规约-12:  【强制】泛型通配符&lt;? extends T&gt;来接收返回的数据，此写法的泛型集合不能使用 add 方 而&lt;? super T&gt;不能使用 get 方法，两者在接口调用赋值的场景中容易出错。</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CollectionGuideline12</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        List&lt;Animal&gt; animals = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">        List&lt;Dog&gt; dogs = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">        List&lt;Husky&gt; huskies = Lists.newArrayList(<span class="keyword">new</span> <span class="title class_">Husky</span>(), <span class="keyword">new</span> <span class="title class_">Husky</span>());</span><br><span class="line">        List&lt;Corgi&gt; corgis = Lists.newArrayList(<span class="keyword">new</span> <span class="title class_">Corgi</span>(), <span class="keyword">new</span> <span class="title class_">Corgi</span>());</span><br><span class="line"></span><br><span class="line">        <span class="comment">// addAll 可以将Dog任意子类加入到List&lt;Dog&gt;中</span></span><br><span class="line">        addAll(dogs, huskies);</span><br><span class="line">        addAll(dogs, corgis);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// addAll 也可以将Dog任意子类加入到List&lt;Animal&gt;中</span></span><br><span class="line">        addAll(animals, huskies);</span><br><span class="line">        addAll(animals, corgis);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 将 任何Dog或其子类的List对象 添加到 任何 Dog或其父类的List中</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> dest</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> src</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">addAll</span><span class="params">(List&lt;? <span class="built_in">super</span> Dog&gt; dest, List&lt;? extends Dog&gt; src)</span> &#123;</span><br><span class="line">        dest.addAll(src);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Animal</span> &#123;&#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Dog</span> <span class="keyword">extends</span> <span class="title class_">Animal</span> &#123;&#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Husky</span> <span class="keyword">extends</span> <span class="title class_">Dog</span> &#123;&#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Corgi</span> <span class="keyword">extends</span> <span class="title class_">Dog</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="并发规约-6-【强制】必须回收自定义的-ThreadLocal-变量，尤其在线程池场景下，线程经常会被复用，如果不清理-自定义的-ThreadLocal-变量，可能会影响后续业务逻辑和造成内存泄露等问题。尽量在代理中使用-try-finally-块进行回收。"><a href="#并发规约-6-【强制】必须回收自定义的-ThreadLocal-变量，尤其在线程池场景下，线程经常会被复用，如果不清理-自定义的-ThreadLocal-变量，可能会影响后续业务逻辑和造成内存泄露等问题。尽量在代理中使用-try-finally-块进行回收。" class="headerlink" title="并发规约-6: 【强制】必须回收自定义的 ThreadLocal 变量，尤其在线程池场景下，线程经常会被复用，如果不清理 自定义的 ThreadLocal 变量，可能会影响后续业务逻辑和造成内存泄露等问题。尽量在代理中使用 try-finally 块进行回收。"></a>并发规约-6: 【强制】必须回收自定义的 ThreadLocal 变量，尤其在线程池场景下，线程经常会被复用，如果不清理 自定义的 ThreadLocal 变量，可能会影响后续业务逻辑和造成内存泄露等问题。尽量在代理中使用 try-finally 块进行回收。</h5><ul>
+<li>注意设置java启动参数 -Xms15m -Xmx15m 限制堆大小15M;</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ConcurrentGuideline6</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * supplier supplies 5MB buffer</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ThreadLocal&lt;ByteBuffer&gt; BYTE_BUFFER_THREAD_LOCAL =</span><br><span class="line">            ThreadLocal.withInitial(() -&gt; ByteBuffer.allocate(<span class="number">5</span> * <span class="number">1024</span> * <span class="number">1024</span>));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ThreadLocal&lt;ByteBuffer&gt; BYTE_BUFFER_THREAD_LOCAL_2 =</span><br><span class="line">            ThreadLocal.withInitial(() -&gt; ByteBuffer.allocate(<span class="number">5</span> * <span class="number">1024</span> * <span class="number">1024</span>));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ThreadLocal&lt;ByteBuffer&gt; BYTE_BUFFER_THREAD_LOCAL_3 =</span><br><span class="line">            ThreadLocal.withInitial(() -&gt; ByteBuffer.allocate(<span class="number">5</span> * <span class="number">1024</span> * <span class="number">1024</span>));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;main-thread...&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * Runnable1逻辑：</span></span><br><span class="line"><span class="comment">         * 1. 获取5mb的ThreadLocal1对象值</span></span><br><span class="line"><span class="comment">         * 2. 打印日志</span></span><br><span class="line"><span class="comment">         * 3. 线程强制waiting 2秒</span></span><br><span class="line"><span class="comment">         * 4. 手动清除ThreadLocal</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="type">Runnable</span> <span class="variable">runnable</span> <span class="operator">=</span> () -&gt; &#123;</span><br><span class="line">            BYTE_BUFFER_THREAD_LOCAL.get();</span><br><span class="line">            System.out.println(Thread.currentThread().getName() + <span class="string">&quot;get ByteBuffer 1&quot;</span>);</span><br><span class="line">            LockSupport.parkNanos(Duration.ofSeconds(<span class="number">2</span>).toNanos());</span><br><span class="line">            BYTE_BUFFER_THREAD_LOCAL.remove();</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Runnable2 获取其他ThreadLocal对象：ThreadLocal2</span></span><br><span class="line">        <span class="type">Runnable</span> <span class="variable">runnable2</span> <span class="operator">=</span> () -&gt; &#123;</span><br><span class="line">            BYTE_BUFFER_THREAD_LOCAL_2.get();</span><br><span class="line">            System.out.println(Thread.currentThread().getName() + <span class="string">&quot;get ByteBuffer 2&quot;</span>);</span><br><span class="line">            LockSupport.parkNanos(Duration.ofSeconds(<span class="number">2</span>).toNanos());</span><br><span class="line">            BYTE_BUFFER_THREAD_LOCAL_2.remove();</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Runnable3 获取其他ThreadLocal对象：ThreadLocal3</span></span><br><span class="line">        <span class="type">Runnable</span> <span class="variable">runnable3</span> <span class="operator">=</span> () -&gt; &#123;</span><br><span class="line">            BYTE_BUFFER_THREAD_LOCAL_3.get();</span><br><span class="line">            System.out.println(Thread.currentThread().getName() + <span class="string">&quot;get ByteBuffer 3&quot;</span>);</span><br><span class="line">            LockSupport.parkNanos(Duration.ofSeconds(<span class="number">2</span>).toNanos());</span><br><span class="line">            BYTE_BUFFER_THREAD_LOCAL_3.remove();</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 单线程线程池</span></span><br><span class="line">        <span class="type">ThreadPoolExecutor</span> <span class="variable">threadPoolExecutor</span> <span class="operator">=</span></span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>(<span class="number">1</span>, <span class="number">1</span>, <span class="number">0L</span>, TimeUnit.SECONDS,</span><br><span class="line">                        <span class="keyword">new</span> <span class="title class_">LinkedBlockingDeque</span>&lt;&gt;(<span class="number">10</span>), Executors.defaultThreadFactory());</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 在限制heapSize是15M的情况下，如不remove ThreadLocal, 会OOM</span></span><br><span class="line">        threadPoolExecutor.execute(runnable);</span><br><span class="line">        threadPoolExecutor.execute(runnable2);</span><br><span class="line">        threadPoolExecutor.execute(runnable3);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/02/07/network-base/" rel="next" title="网络基础知识">
+                <i class="fa fa-chevron-left"></i> 网络基础知识
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95"><span class="nav-number">1.</span> <span class="nav-text">目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Git%E5%88%86%E6%94%AF%E7%AE%A1%E7%90%86%E8%A7%84%E8%8C%83"><span class="nav-number">2.</span> <span class="nav-text">Git分支管理规范</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E5%88%86%E6%94%AF%E8%AF%B4%E6%98%8E"><span class="nav-number">2.1.</span> <span class="nav-text">常用分支说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#master%E5%88%86%E6%94%AF"><span class="nav-number">2.1.1.</span> <span class="nav-text">master分支:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#develop%E5%88%86%E6%94%AF"><span class="nav-number">2.1.2.</span> <span class="nav-text">develop分支:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#feature-amp-fix%E5%88%86%E6%94%AF"><span class="nav-number">2.1.3.</span> <span class="nav-text">feature &amp; fix分支:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#release%E5%88%86%E6%94%AF"><span class="nav-number">2.1.4.</span> <span class="nav-text">release分支:</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E6%B5%81%E7%A8%8B%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.2.</span> <span class="nav-text">操作流程示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E8%A7%84%E8%8C%83"><span class="nav-number">3.</span> <span class="nav-text">设计规范</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">3.1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%BF%E9%87%8C%E8%AE%BE%E8%AE%A1%E8%A7%84%E7%BA%A6"><span class="nav-number">3.2.</span> <span class="nav-text">阿里设计规约</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E7%BB%84UML%E5%9B%BE%E7%A4%BA%E4%BE%8B"><span class="nav-number">3.3.</span> <span class="nav-text">本组UML图示例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E4%B8%80%E9%80%9A%E7%94%B5%E8%AF%9D%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E7%9A%84%E7%8A%B6%E6%80%81%E5%9B%BE"><span class="nav-number">3.3.1.</span> <span class="nav-text">1. 一通电话生命周期的状态图:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E9%80%9A%E8%AF%9D%E5%8F%91%E8%B5%B7%E5%88%B0%E6%8E%A5%E5%90%AC%E7%9A%84%E6%97%B6%E5%BA%8F%E5%9B%BE"><span class="nav-number">3.3.2.</span> <span class="nav-text">2. 通话发起到接听的时序图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E4%B8%8E%E5%8D%8F%E4%BD%9C%E6%96%B9%E5%A4%96%E9%83%A8%E7%B3%BB%E7%BB%9F%E4%BA%A4%E4%BA%92%E7%9A%84-%E6%B4%BB%E5%8A%A8%E5%9B%BE"><span class="nav-number">3.3.3.</span> <span class="nav-text">3. 与协作方外部系统交互的 活动图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-UAT%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83%E5%90%84%E4%B8%AA%E6%9C%8D%E5%8A%A1%E9%97%B4%E7%9A%84%E9%83%A8%E7%BD%B2%E5%9B%BE"><span class="nav-number">3.3.4.</span> <span class="nav-text">4. UAT测试环境各个服务间的部署图</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%98%BF%E9%87%8C%E5%B7%B4%E5%B7%B4-Java%E5%BC%80%E5%8F%91%E6%89%8B%E5%86%8C%E8%A7%A3%E8%AF%BB"><span class="nav-number">4.</span> <span class="nav-text">阿里巴巴 Java开发手册解读</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9A%BE%E7%82%B9%E8%A7%A3%E8%AF%BB"><span class="nav-number">4.1.</span> <span class="nav-text">难点解读:</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%91%BD%E5%90%8D%E8%A7%84%E7%BA%A6-9-%E3%80%90%E5%BC%BA%E5%88%B6%E3%80%91POJO-%E7%B1%BB%E4%B8%AD%E7%9A%84%E4%BB%BB%E4%BD%95%E5%B8%83%E5%B0%94%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%8F%98%E9%87%8F%EF%BC%8C%E9%83%BD%E4%B8%8D%E8%A6%81%E5%8A%A0-is-%E5%89%8D%E7%BC%80%EF%BC%8C%E5%90%A6%E5%88%99%E9%83%A8%E5%88%86%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90%E4%BC%9A%E5%BC%95%E8%B5%B7%E5%BA%8F%E5%88%97%E5%8C%96%E9%94%99%E8%AF%AF%E3%80%82"><span class="nav-number">4.1.0.1.</span> <span class="nav-text">命名规约-9: 【强制】POJO 类中的任何布尔类型的变量，都不要加 is 前缀，否则部分框架解析会引起序列化错误。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%9B%86%E5%90%88%E8%A7%84%E7%BA%A6-2-%E3%80%90%E5%BC%BA%E5%88%B6%E3%80%91%E5%88%A4%E6%96%AD%E6%89%80%E6%9C%89%E9%9B%86%E5%90%88%E5%86%85%E9%83%A8%E7%9A%84%E5%85%83%E7%B4%A0%E6%98%AF%E5%90%A6%E4%B8%BA%E7%A9%BA%EF%BC%8C%E4%BD%BF%E7%94%A8-isEmpty-%E6%96%B9%E6%B3%95%EF%BC%8C%E8%80%8C%E4%B8%8D%E6%98%AF-size-0-%E7%9A%84%E6%96%B9%E5%BC%8F%E3%80%82"><span class="nav-number">4.1.0.2.</span> <span class="nav-text">集合规约-2: 【强制】判断所有集合内部的元素是否为空，使用 isEmpty() 方法，而不是 size() &#x3D;&#x3D; 0 的方式。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%9B%86%E5%90%88%E8%A7%84%E7%BA%A6-3-amp-4-%E3%80%90%E5%BC%BA%E5%88%B6%E3%80%91%E5%9C%A8%E4%BD%BF%E7%94%A8-java-util-stream-Collectors-%E7%B1%BB%E7%9A%84-toMap-%E6%96%B9%E6%B3%95%E8%BD%AC%E4%B8%BA-Map-%E9%9B%86%E5%90%88%E6%97%B6%EF%BC%8C%E4%B8%80%E5%AE%9A%E8%A6%81%E4%BD%BF%E7%94%A8%E5%8F%82%E6%95%B0%E7%B1%BB%E5%9E%8B-%E4%B8%BA-BinaryOperator%EF%BC%8C%E5%8F%82%E6%95%B0%E5%90%8D%E4%B8%BA-mergeFunction-%E7%9A%84%E6%96%B9%E6%B3%95%EF%BC%8C%E5%90%A6%E5%88%99%E5%BD%93%E5%87%BA%E7%8E%B0%E7%9B%B8%E5%90%8C-key-%E6%97%B6%E4%BC%9A%E6%8A%9B%E5%87%BA-IllegalStateException-%E5%BC%82%E5%B8%B8%E3%80%82%E3%80%90%E5%BC%BA%E5%88%B6%E3%80%91%E5%9C%A8%E4%BD%BF%E7%94%A8-java-util-stream-Collectors-%E7%B1%BB%E7%9A%84-toMap-%E6%96%B9%E6%B3%95%E8%BD%AC%E4%B8%BA-Map-%E9%9B%86%E5%90%88%E6%97%B6%EF%BC%8C%E4%B8%80%E5%AE%9A%E8%A6%81%E6%B3%A8%E6%84%8F%E5%BD%93-value-%E4%B8%BA-null-%E6%97%B6%E4%BC%9A%E6%8A%9B-NPE-%E5%BC%82%E5%B8%B8%E3%80%82"><span class="nav-number">4.1.0.3.</span> <span class="nav-text">集合规约-3&amp;4: 【强制】在使用 java.util.stream.Collectors 类的 toMap() 方法转为 Map 集合时，一定要使用参数类型 为 BinaryOperator，参数名为 mergeFunction 的方法，否则当出现相同 key 时会抛出 IllegalStateException 异常。【强制】在使用 java.util.stream.Collectors 类的 toMap() 方法转为 Map 集合时，一定要注意当 value 为 null 时会抛 NPE 异常。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%9B%86%E5%90%88%E8%A7%84%E7%BA%A6-12-%E3%80%90%E5%BC%BA%E5%88%B6%E3%80%91%E6%B3%9B%E5%9E%8B%E9%80%9A%E9%85%8D%E7%AC%A6-lt-extends-T-gt-%E6%9D%A5%E6%8E%A5%E6%94%B6%E8%BF%94%E5%9B%9E%E7%9A%84%E6%95%B0%E6%8D%AE%EF%BC%8C%E6%AD%A4%E5%86%99%E6%B3%95%E7%9A%84%E6%B3%9B%E5%9E%8B%E9%9B%86%E5%90%88%E4%B8%8D%E8%83%BD%E4%BD%BF%E7%94%A8-add-%E6%96%B9-%E8%80%8C-lt-super-T-gt-%E4%B8%8D%E8%83%BD%E4%BD%BF%E7%94%A8-get-%E6%96%B9%E6%B3%95%EF%BC%8C%E4%B8%A4%E8%80%85%E5%9C%A8%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%E8%B5%8B%E5%80%BC%E7%9A%84%E5%9C%BA%E6%99%AF%E4%B8%AD%E5%AE%B9%E6%98%93%E5%87%BA%E9%94%99%E3%80%82"><span class="nav-number">4.1.0.4.</span> <span class="nav-text">集合规约-12:  【强制】泛型通配符&lt;? extends T&gt;来接收返回的数据，此写法的泛型集合不能使用 add 方 而&lt;? super T&gt;不能使用 get 方法，两者在接口调用赋值的场景中容易出错。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E8%A7%84%E7%BA%A6-6-%E3%80%90%E5%BC%BA%E5%88%B6%E3%80%91%E5%BF%85%E9%A1%BB%E5%9B%9E%E6%94%B6%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84-ThreadLocal-%E5%8F%98%E9%87%8F%EF%BC%8C%E5%B0%A4%E5%85%B6%E5%9C%A8%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%9C%BA%E6%99%AF%E4%B8%8B%EF%BC%8C%E7%BA%BF%E7%A8%8B%E7%BB%8F%E5%B8%B8%E4%BC%9A%E8%A2%AB%E5%A4%8D%E7%94%A8%EF%BC%8C%E5%A6%82%E6%9E%9C%E4%B8%8D%E6%B8%85%E7%90%86-%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84-ThreadLocal-%E5%8F%98%E9%87%8F%EF%BC%8C%E5%8F%AF%E8%83%BD%E4%BC%9A%E5%BD%B1%E5%93%8D%E5%90%8E%E7%BB%AD%E4%B8%9A%E5%8A%A1%E9%80%BB%E8%BE%91%E5%92%8C%E9%80%A0%E6%88%90%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2%E7%AD%89%E9%97%AE%E9%A2%98%E3%80%82%E5%B0%BD%E9%87%8F%E5%9C%A8%E4%BB%A3%E7%90%86%E4%B8%AD%E4%BD%BF%E7%94%A8-try-finally-%E5%9D%97%E8%BF%9B%E8%A1%8C%E5%9B%9E%E6%94%B6%E3%80%82"><span class="nav-number">4.1.0.5.</span> <span class="nav-text">并发规约-6: 【强制】必须回收自定义的 ThreadLocal 变量，尤其在线程池场景下，线程经常会被复用，如果不清理 自定义的 ThreadLocal 变量，可能会影响后续业务逻辑和造成内存泄露等问题。尽量在代理中使用 try-finally 块进行回收。</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">谢天帝</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

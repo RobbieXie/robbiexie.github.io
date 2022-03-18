@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="分层模型 OSI modelOpen Systems Interconnection model (OSI model) 开放系统互联模型是一个概念性的参考模型, 不指定任何协议的具体实现. 核心思想在于不同网络层级间的解耦、接口独立, 任何一层协议可以升级替换后不影响整个网络功能, 在网络通信协议设计时起到一个指导作用. Definitions: 通信协议(Communication proto">
+<meta property="og:type" content="article">
+<meta property="og:title" content="网络基础知识">
+<meta property="og:url" content="https://robbiexie.github.io/2022/02/07/network-base/index.html">
+<meta property="og:site_name" content="RobbieXie&#39;s Blog">
+<meta property="og:description" content="分层模型 OSI modelOpen Systems Interconnection model (OSI model) 开放系统互联模型是一个概念性的参考模型, 不指定任何协议的具体实现. 核心思想在于不同网络层级间的解耦、接口独立, 任何一层协议可以升级替换后不影响整个网络功能, 在网络通信协议设计时起到一个指导作用. Definitions: 通信协议(Communication proto">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/osi7.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/osi_pdu_pass.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/osi_transfer_example.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/ble_osi.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/manchester.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/preamble.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/datalinklayer_sublayers.png">
+<meta property="og:image" content="https://robbiexie.github.io/Users/talentxiet/Desktop/我的学习文档/网络基础/mac_addr.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/datalink_timewindow.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/data_link_layer_frame.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/ip_nets.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/ip_packet.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/ip_offset.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/icmp_kinds.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/ip_routing_protocol.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/rip.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/BGP_speaker.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/BGP_example.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/transport_process.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/udp_protocol.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/tcp_bytes_stream.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/tcp_protocol.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/tcp_window.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/tcp_buffer.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/tcp_rto.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/tcp_sack.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/tcp_slow_start.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/tcp_congest.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/tcp_handshake.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/tcp_bye_handshake.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/tcp_state.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/dns.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/http_protocol.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/smtp.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/dhcp.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/syscall.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/socket2.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/net_sec_key.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/signature.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/sec_mac.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/对称密钥分配.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/ipsec.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/ssl.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/ssl_procedure.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/av_protocols.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/rtp_protocol.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/rtcp.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/hub_pic.png">
+<meta property="og:image" content="https://robbiexie.github.io/Users/talentxiet/Desktop/我的学习文档/网络基础/bridge_pic.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/switch_pic.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/switch_net.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/real_switch.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/ip_group_question.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/routing_table.png">
+<meta property="og:image" content="https://robbiexie.github.io/Users/talentxiet/Desktop/我的学习文档/网络基础/router_wan_lan.png">
+<meta property="og:image" content="https://robbiexie.github.io/Users/talentxiet/Desktop/我的学习文档/网络基础/router_trans.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/router_trans2.png">
+<meta property="og:image" content="https://robbiexie.github.io/Users/talentxiet/Desktop/我的学习文档/网络基础/real_router.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/02/07/network-base/real_f5.png">
+<meta property="article:published_time" content="2022-02-07T15:16:57.429Z">
+<meta property="article:modified_time" content="2022-03-18T03:49:16.025Z">
+<meta property="article:author" content="谢天帝">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://robbiexie.github.io/2022/02/07/network-base/osi7.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://robbiexie.github.io/2022/02/07/network-base/"/>
+
+
+
+
+
+  <title>网络基础知识 | RobbieXie's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">RobbieXie's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://robbiexie.github.io/2022/02/07/network-base/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="RobbieXie's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">网络基础知识</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2022-02-07T23:16:57+08:00">
+                2022-02-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="分层模型-OSI-model"><a href="#分层模型-OSI-model" class="headerlink" title="分层模型 OSI model"></a>分层模型 OSI model</h2><p><strong>Open Systems Interconnection model</strong> (<strong>OSI model</strong>) 开放系统互联模型是一个概念性的参考模型, 不指定任何协议的具体实现. 核心思想在于不同网络层级间的解耦、接口独立, 任何一层协议可以升级替换后不影响整个网络功能, 在网络通信协议设计时起到一个指导作用.<br><img src="osi7.png" alt="image-osi" style="zoom:50%;" /></p>
+<h3 id="Definitions"><a href="#Definitions" class="headerlink" title="Definitions:"></a>Definitions:</h3><ul>
+<li><p>通信协议(Communication protocols): 让处于同层的不同host实体可以相互交互.</p>
+</li>
+<li><p>Protocol data unit(PDU): 在每一层, 两个实体通过交换该层协议的PDU来进行交互, PDU包含payload(也称为<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Service_data_unit">service data unit</a> ,SDU) 和 protocol-related headers or footers . </p>
+</li>
+<li><p> 数据通信流程: 从Layer highest开始, PDU向下层传递, 并作为下层的SDU; 重复向更下层传递直至Layer lowest; 接着,底层负责将PDU传递给对端底层; 然后,逐层向上传递,拆包解析出各层SDU.</p>
+</li>
+</ul>
+<img src="./osi_pdu_pass.png" alt="image-20220119105145560" style="zoom:40%;" />
+
+<img src="osi_transfer_example.png" alt="image-20220123111825642" style="zoom:43%;" />
+
+<h3 id="Layer-architecture"><a href="#Layer-architecture" class="headerlink" title="Layer architecture"></a>Layer architecture</h3><h4 id="Layer-1-Physical-layer"><a href="#Layer-1-Physical-layer" class="headerlink" title="Layer 1: Physical layer"></a>Layer 1: Physical layer</h4><p>物理层负责非结构化原始数据的传输和接收, between device和物理传输介质。它将raw digital bits转换成electrical电子,optical光学 或radio无线信号等. 物理层规范规格包含蓝牙、以太网和USB标准等.</p>
+<p>Examples: Ethernet family 802.3 PHY(千兆宽带, 百兆宽带), 802.11 LAN &amp; wireless(2.4Ghz, 5Ghz), BLE(Bluetooth Low Energy) PHY,   E1.</p>
+<h4 id="Layer-2-Data-link-layer"><a href="#Layer-2-Data-link-layer" class="headerlink" title="Layer 2: Data link layer"></a>Layer 2: Data link layer</h4><p>物理层的线路有传输介质与通信设备组成，比特流在传输介质上传输时肯定会存在误差错误的。这样就引入了数据链路层在物理层之上，采用差错检测、差错控制和流量控制等方法，向网络层提供高质量的数据传输服务。</p>
+<p>数据链路层从网络层接受数据包, 并在将其发送到物理层之前, 将这些数据包封装成帧frame. 之后在两个相邻节点间(node to node)的链路上传送帧，每一帧包括<strong>数据</strong>和必要的<strong>头尾信息</strong>（如同步信息、地址信息、差错信息等）. 如果帧太大(超过MTU)的话，数据链路层通常会将大帧拆分为一个个的小帧，小帧能够使传输控制和错误检测更加高效。</p>
+<h4 id="Layer-3-Network-layer"><a href="#Layer-3-Network-layer" class="headerlink" title="Layer 3: Network layer"></a>Layer 3: Network layer</h4><p>网络层的任务就是提供能在不同的网络间transfer packets的程序和方法. 网络中会有非常多的nodes, 每个node会拥有自己的访问地址, 网络层就是要提供一种节点间路由寻址方式能让packet准确的传递给destination. 网络层还会在packet在某些MTU较小链路层传输时, 对原包进行分片, 独立传输, 并在下一链路node重新装配.  网络层可以做数据错误校验, 可靠性保障的功能, 但并不necessary.</p>
+<h4 id="Layer-4-Transport-layer"><a href="#Layer-4-Transport-layer" class="headerlink" title="Layer 4: Transport layer"></a>Layer 4: Transport layer</h4><p>传输层负责将变长数据(variable-length data sequences)从源传输到目的地, 并提供保障QoS的方式. </p>
+<h4 id="Layer-5-Session-layer"><a href="#Layer-5-Session-layer" class="headerlink" title="Layer 5: Session layer"></a>Layer 5: Session layer</h4><p>会话层的主要功能是负责维护两个节点之间的传输联接，确保点到点传输不中断，以及管理数据交换等功能。会话层在应用进程中建立、管理和终止会话。</p>
+<h4 id="Layer-6-Presentation-layer"><a href="#Layer-6-Presentation-layer" class="headerlink" title="Layer 6: Presentation layer"></a>Layer 6: Presentation layer</h4><p>表示层的主要功能是处理在两个通信系统中交换信息的表示方式，主要包括数据格式变化、<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86/11048982">数据加密</a>与解密、<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E6%95%B0%E6%8D%AE%E5%8E%8B%E7%BC%A9/5198909">数据压缩</a>与解压等</p>
+<h4 id="Layer-7-Application-layer"><a href="#Layer-7-Application-layer" class="headerlink" title="Layer 7: Application layer"></a>Layer 7: Application layer</h4><p>该层直接面向用户，是OSI中的最高层。它的主要任务是为用户提供应用的接口，即提供不同计算机间的文件传送、访问与管理，电子邮件的内容处理，不同计算机通过网络交互访问的虚拟终端功能等.</p>
+<h3 id="Protocol-stack-examples"><a href="#Protocol-stack-examples" class="headerlink" title="Protocol stack examples"></a>Protocol stack examples</h3><h4 id="BLE-protocol-stack"><a href="#BLE-protocol-stack" class="headerlink" title="BLE protocol stack"></a>BLE protocol stack</h4><img src="./ble_osi.png" alt="ble_osi" style="zoom:80%;" />
+
+<h2 id="分层模型——TCP-IP模型及协议族"><a href="#分层模型——TCP-IP模型及协议族" class="headerlink" title="分层模型——TCP/IP模型及协议族"></a>分层模型——TCP/IP模型及协议族</h2><p>TCP/IP 模型将网络分为四层(算上物理层就是五层)，它不关注底层物理介质，主要关注终端之间的逻辑数据流转发。<br>TCP/IP 模型的核心是<strong>网络层</strong>和<strong>传输层</strong>，网络层解决网络之间的逻辑转发问题，传输层保证源端到目的端之间的可靠传输。最上层的<strong>应用层</strong>通过各种协议向终端用户提供业务应用。</p>
+<h3 id="物理层"><a href="#物理层" class="headerlink" title="物理层"></a>物理层</h3><p>任何协议栈都逃不脱最终帮其传输数据的物理层. 物理层传递的都是bit flow, 而以太网使用的都是曼彻斯特编码信号. 曼彻斯特(Manchester)编码的编码方法是把每个码元分成两个相等的间隔。 如图,码元1是前一个间隔为高电压后一个间隔为低电压，即位周期中心向下跳变表示1；码元0正好相反，位周期中心向上跳变表示0。这样保证了在每一个 码元中间出现一次电压的转换，接收端就利用这种电压的转换方便地把位同步信号提取出来.</p>
+<img src="./manchester.png" alt="image-20220125225252662" style="zoom:45%;" />
+
+<p>在链路层从物理层收到的bit流中提取数据时, 一个问题就是如何区分帧的开始.  Manchester + Preamble.</p>
+<img src="./preamble.png" alt="image-20220125230003591" style="zoom:40%;" />
+
+<h3 id="数据链路层"><a href="#数据链路层" class="headerlink" title="数据链路层"></a>数据链路层</h3><p>数据链路层位于网络层之下, 这意味着它与网络层协议比如常用的IP协议是解耦的, 以<strong>以太网数据链路层帧</strong>为例, 在通信时, 其完全不关心payload中是IP协议报文或是其他协议报文, 而是完全通过帧首的源MAC、目标MAC地址进行寻址通信.</p>
+<p>IEEE 802 规范下数据链路层向下还可细分为 logical link control (LLC) 层和 medium access control (MAC) 层。</p>
+<img src="./datalinklayer_sublayers.png" alt="dll_sublayes" style="zoom:40%;" />
+
+<p>LLC 层又叫做<code>逻辑控制链路</code>层，它主要用于数据传输，它充当网络层和数据链路层中的<code>媒体访问控制（MAC）</code>子层之间的接口。LLC 层的主要功能如下</p>
+<ul>
+<li>LLC 的主要功能是发送时在 MAC 层上多路复用协议，并在接收时同样地多路分解协议。</li>
+<li>LLC 提供跳到跳的流的差错控制，像是路由器和路由器之间这种相邻节点的数据传输称为 <code>一跳</code>。</li>
+<li>它允许通过计算机网络进行多点通信。</li>
+</ul>
+<p>MAC 层负责传输介质的流控制和多路复用，它的主要功能如下</p>
+<ul>
+<li>MAC 层为 LLC 和 OSI 网络的上层提供了物理层的抽象。</li>
+<li>MAC 层负责封装帧，以便通过物理介质进行传输。</li>
+<li>MAC 层负责解析源和目标地址。</li>
+<li>MAC 层还负责在冲突的情况下执行冲突解决并启动重传。</li>
+<li>MAC 层负责生成帧校验序列，从而有助于防止传输错误。</li>
+</ul>
+<p>在 MAC 层中，有一个关键概念是 <code>MAC 地址</code>。MAC 地址主要用于识别数据链路中互联的节点. MAC 地址长 6 bytes (48 bit)，在使用<code>网卡(NIC)</code> 的情况下，MAC 地址一般都会烧入 ROM 中。因此，任何一个网卡的 MAC 地址都是唯一的。</p>
+<img src="/Users/talentxiet/Desktop/我的学习文档/网络基础/mac_addr.png" alt="mac_addr" style="zoom:28%;" />
+
+<p>链路层的差错控制通过增加差错编码来实现, 又可分为<strong>检错编码</strong>和<strong>纠错编码</strong>: 检错编码常见有奇偶校验码和循环冗余码; 纠错编码常见有海明码等.</p>
+<p>流量(阻塞)控制是控制链路上的帧的发送速率，使接收方有足够的缓冲空间来接收帧，主要方法有两种，停止-等待协议和滑动窗口协议. 停止-等待协议是一种特殊的滑动窗口协议，相当于发送窗口和接收窗口大小为1的滑动窗口协议。</p>
+<img src="./datalink_timewindow.png" alt="image-20220121112137195" style="zoom:40%;" />
+
+<p>以太网上传输的链路层数据帧有两种格式：<strong>Ethernet_II 和 IEEE802.3</strong>。选择哪种格式由 TCP/IP 协议簇中的网络层决定。大多数的数据帧使用的是 Ethernet_II 格式. IEEE802.3 格式：Length字段值小于等于0x05DC. Ethernet_II 格式：Type 字段值大于等于0x0600. 以此来供链路层判断数据是哪种规范.</p>
+<img src="./data_link_layer_frame.png" alt="image-20220119143457079" style="zoom:45%;" />
+
+<p>FCS: frame check sequence, 错误检查的.<br>LLC：Logical Link Control，逻辑链路控制由目的访问点 D.SAP （Destination Service Access Point）、源服务访问点 S.SAP（Source Service Access Point）和 Control 字段组成.<br>SNAP：Sub-network Access Protocol，子网访问协议由机构代码（Org Code）和类型（Type）字段组成。Org Code 三个字节都为 0 。Type 字段的含义与 Ethernet_II 帧中的 Type 字段相同.</p>
+<h3 id="网络层"><a href="#网络层" class="headerlink" title="网络层"></a>网络层</h3><h4 id="IP协议"><a href="#IP协议" class="headerlink" title="IP协议"></a><strong>IP协议</strong></h4><ul>
+<li>对于网络层，<strong>IP协议</strong>是其中一个非常重要的协议</li>
+<li>IP协议使得复杂的实际网络变为一个<strong>虚拟互联的网络</strong>（也就是我们只需要将终端设备连接到这个网络中去即可，并不需要关心里边实际的复杂网络）</li>
+<li>IP协议使得网络层可以<strong>屏蔽底层细节</strong>而专注网络层的<strong>数据转发</strong>（如果单从网络层去看，我们是不用关心<strong>数据包</strong>是通过海底电缆还是通过无线WiFi传输到目的计算机的）</li>
+<li>IP协议<strong>解决了在虚拟网络中数据报传输路径的问题</strong></li>
+</ul>
+<img src="./ip_nets.png" alt="image-20220125231347009" style="zoom:40%;" />
+
+<p><strong>IP协议特点:</strong></p>
+<ul>
+<li>无状态, 是指IP通信双方不同步传输数据的状态信息，因此所有IP数据报的发送，传输，和接收都是相互独立的，没有山下文关系的。发送、传输和接收都是相互独立、没有上下文关系的。这种服务最大的缺点是无法处理乱序和重复的IP数据报。比如发送端发送出的第N个IP数据报可能比第N+1个IP数据报后到达接收端，而同一个IP数据报也可能经过不同的路径多次到达接收端。在这两种情况下，接收端的IP模块无法检测到乱序和重复，因为这些IP数据报之间没有任何上下文关系。接收端的IP模块只要收到了完整的IP数据报(如果是IP分片的话，IP 模块将先执行重组)，就将其数据部分(TCP报文段、UDP数据报或者ICMP报文)，上交给上层协议。那么从上层协议来看，这些数据就可能是乱序的、重复的。面向连接的协议，比如TCP协议，则能够自己处理乱序的、重复的报文段，它递交给上层协议的内容绝对是有序的、正确的。虽然IP数据报头部提供了一个标识字段(见后文)用以唯-标识-一个IP数据报，但它是被用来处理IP分片和重组的，而不是用来指示接收顺序的。无状态服务的优点也很明显:简单、高效。我们无须为保持通信的状态而分配一些内核资源，也无须每次传输数据时都携带状态信息。在网络协议中，无状态是很常见的，比如UDP协议和HTTP协议都是无状态协议。以HTTP协议为例，一个浏览器的连续两次网页请求之间没有任何关联，它们将被Web服务器独立地处理。</li>
+<li>无连接(connectionless), 是指IP通信双方都不长久地维持对方的任何信息。这样，上层协议每次发送数据的时候，都必须明确指定对方的IP地址。</li>
+<li>不可靠, 是指IP协议不能保证IP数据报准确地到达接收端，它只是承诺尽最大努力(best effort)。 很多种情况都能导致IP数据报发送失败。比如，某个中转路由器发现IP数据报在网络上存活的时间太长(根据IP数据报头部字段TTL判断，见后文)，那么它将丢弃之，并返回一个ICMP错误消息(超时错误)给发送端。又比如，接收端发现收到的IP数据报不正确(通过校验机制)，它也将丢弃之，并返回一个ICMP错误消息(IP 头部参数错误)给发送端。无论哪种情况，发送端的IP模块一旦检测到IP数据报发送失败，就通知上层协议发送失败，而不会试图重传。因此，使用IP服务的上层协议(比如TCP协议)需要自己实现数据确认、超时重传等机制以达到可靠传输的目的。</li>
+</ul>
+<p><strong>IP协议报文格式 :</strong></p>
+<img src="./ip_packet.png" alt="image-20220125234059378" style="zoom:40%;" />
+
+<ul>
+<li><p><strong>版本</strong>：占4位，指的是IP协议的版本，通信双方的版本必须一致，即IPv4，也有IPv6</p>
+</li>
+<li><p><strong>首部长度</strong>：占4位，最大数值为15，表示的是IP首部的长度，单位是“32位字”（4个字节），也就是<strong>IP首部</strong>最大长度为60字节</p>
+</li>
+<li><p><strong>服务类型</strong>：服务登记, 比如VIP专线, 这个一般是不需要关心的</p>
+</li>
+<li><p><strong>总长度</strong>：占16位，最大数值为65535，表示的是<strong>IP数据报总长度</strong>（IP首部+IP数据） （在前边介绍数据链路层的时候，也提到过一个长度。对于数据链路层的长度，称之为<strong>MTU</strong>，一般为1500字节。而IP数据报的最大长度有65535个字节，比MTU要大。如果真正传输的时候，如果出现这种情况，数据链路层会对IP数据报进行<strong>分片</strong>，也就是将一个较长的IP数据报拆分成多个数据帧来进行传输）</p>
+</li>
+<li><p><strong>标识</strong>：占16位，计数器标示, 分片后的同组数据具备相同标示. 同一组的包根据标示重组.</p>
+</li>
+<li><p><strong>标记</strong>： 占3位，但目前只有2位有意义。<br> 标志字段中的最低位记为MF(More Fragment)。MF=1即表示后面“还有分片”的数据报,MF=0表示这已是若干数据报片中的最后一个<br> 标志字段中间的一位记为DF(Don’t Fragment)，意思是“不能分片”。只有当DF=0时才允许分片。</p>
+</li>
+<li><p><strong>片偏移</strong>：前边有提到，如果IP数据报的长度过长，会进行IP报文的分片，把一个IP报文拆分成多个数据帧进行数据链路层的传输(以<strong>8 Bytes</strong>的倍数分包)。因此，如果拆分的话，就需要使用<strong>片偏移</strong>来记录当前的数据帧，保存的<strong>第几个偏移的IP数据</strong></p>
+ <img src="./ip_offset.png" alt="image-20220129104929487" style="zoom:45%;" /></li>
+<li><p><strong>TTL</strong>：占8位，表明IP数据报文在网络中的<strong>寿命</strong>，每经过一个设备（不管是路由器还是计算机），TTL减一，当TTL=0时，网络设备必须<strong>丢弃</strong>该报文（它解决的就是，当网络报文找不到终点的时候，避免网络报文在网络中无限的传输，以消耗带宽）</p>
+</li>
+<li><p><strong>协议</strong>：占8位，表明IP数据所携带的具体数据是什么<strong>协议</strong>的（如TCP、UDP等，一些协议对应的值，可参考下图）</p>
+</li>
+<li><p><strong>校验和</strong>：占16位，校验IP首部是否有出错（接收方接收到IP首部之后也会进行校验，如果有错，则直接丢弃）</p>
+</li>
+<li><p><strong>源IP地址</strong>：<strong>发送</strong>IP数据报的网络设备的IP地址</p>
+</li>
+<li><p><strong>目的IP地址</strong>：IP数据报要<strong>到达</strong>的目的网络设备的IP地址</p>
+</li>
+</ul>
+<h4 id="ICMP协议"><a href="#ICMP协议" class="headerlink" title="ICMP协议"></a><strong>ICMP协议</strong></h4><img src="./icmp_kinds.png" alt="image-20220126215905234" style="zoom:50%;" />
+
+<h4 id="路由选择协议"><a href="#路由选择协议" class="headerlink" title="路由选择协议"></a><strong>路由选择协议</strong></h4><p><strong>自治系统</strong>：autonomous system。在互联网中，一个自治系统(AS)是一个有权自主地决定在本系统中应采用各种<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E8%B7%AF%E7%94%B1%E5%8D%8F%E8%AE%AE/202634">路由协议</a>的小型单位。这个网络单位可以是一个简单的网络也可以是一个由一个或多个普通的<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86%E5%91%98/595848">网络管理员</a>来控制的网络群体，它是一个单独的可管理的<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E7%BD%91%E7%BB%9C%E5%8D%95%E5%85%83/9928606">网络单元</a>（例如一所大学，一个企业或者一个公司个体）。</p>
+<img src="./ip_routing_protocol.png" alt="image-20220126220513526" style="zoom:50%;" />
+
+<p>内部网关协议:</p>
+<ul>
+<li>RIP, Routing Information Protocol: 优点, 算法简单; 缺点, 路由故障链路改变远端感知慢, 距离有限 max16, 大规模网络路由表可能过大.</li>
+</ul>
+<img src="./rip.png" alt="image-20220126220918042" style="zoom:50%;" />
+
+<ul>
+<li><p>OSPF, Open Shortest Path First 开放的最短路径优先算法: </p>
+<p>与RIP三个区别:（1）向本<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E8%87%AA%E6%B2%BB%E7%B3%BB%E7%BB%9F">自治系统</a>中所有路由器发送信息。（2）发送的信息就是与本<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E8%B7%AF%E7%94%B1%E5%99%A8">路由器</a>相邻的所有路由器的链路状态，但这只是路由器所知道的部分信息。（3）只有在链路状态发生变化时，<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E8%B7%AF%E7%94%B1%E5%99%A8">路由器</a>才向所有路由器用<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E6%B4%AA%E6%B3%9B">洪泛</a>法发送此信息。</p>
+</li>
+</ul>
+<p>外部(边界)网关协议:</p>
+<p>BGP用于在不同的自治系统（AS）之间交换路由信息。当两个AS需要交换路由信息时，每个AS都必须指定一个运行BGP的节点，来代表AS与其他的AS交换路由信息。两个AS中利用BGP交换信息的路由器也被称为边界网关（Border Gateway）或边界路由器（Border Router）. </p>
+<img src="./BGP_speaker.png" alt="image-20220126223533819" style="zoom:50%;" />
+
+<img src="./BGP_example.png" alt="image-20220126223429235" style="zoom:40%;" />
+
+
+
+<h3 id="传输层"><a href="#传输层" class="headerlink" title="传输层"></a>传输层</h3><p>端口作用, 实现进程到进程的通信, 复用ip线路, 提供标准的的端口-&gt;进程的映射方式.</p>
+<img src="./transport_process.png" alt="image-20220126230009234" style="zoom:50%;" />
+
+<h4 id="UDP"><a href="#UDP" class="headerlink" title="UDP"></a>UDP</h4><p>UDP, User Datagram Protocol用户数据报协议, 只在IP基础上多了复用分用和差错校验的功能.</p>
+<h5 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h5><ul>
+<li>无连接</li>
+<li>尽努力交付</li>
+<li>面向报文的</li>
+<li>无拥塞控制</li>
+<li>支持一对一、一对多、多对一、多对多</li>
+<li>首部开销小</li>
+</ul>
+<h5 id="协议格式"><a href="#协议格式" class="headerlink" title="协议格式"></a>协议格式</h5><img src="./udp_protocol.png" alt="image-20220126233302042" style="zoom:45%;" />
+
+<h4 id="TCP"><a href="#TCP" class="headerlink" title="TCP"></a>TCP</h4><h5 id="特点-1"><a href="#特点-1" class="headerlink" title="特点"></a>特点</h5><ul>
+<li><p>面向连接</p>
+</li>
+<li><p>每条点对点(socket1, socket2)</p>
+</li>
+<li><p>可靠的</p>
+</li>
+<li><p>全双工</p>
+</li>
+<li><p>面向字节流的</p>
+</li>
+<li><p>为应用程序间提供逻辑通信链路</p>
+<img src="./tcp_bytes_stream.png" alt="image-20220129001752910" style="zoom:50%;" /></li>
+</ul>
+<h5 id="协议格式-1"><a href="#协议格式-1" class="headerlink" title="协议格式"></a>协议格式</h5><img src="./tcp_protocol.png" alt="image-20220127225910379" style="zoom:50%;" />
+
+<p><strong>16位源端口号</strong>：指发送端的端口号<br><strong>16位目的端口号</strong>：指目的端的端口号<br><strong>4位头部长度</strong>：同IP头部，表示TCP头部的大小，以4字节为单位。<br><strong>32位序列号</strong>：TCP通信过程中，通过序列号来保证传输过程中数据的有序性<br><strong>32位确认号</strong>：用以对接受到的报文进行确认<br><strong>保留6位</strong><br><strong>URG</strong>：表示紧急指针<br><strong>ACK</strong>：表示确认号<br><strong>PSH</strong>：通知对端立即从缓冲区取走数据<br><strong>RST</strong>: 通知当前连接出现问题, 要释放资源, 有需要则重新建立连接. 也可用于拒绝非法连接.<br><strong>SYN</strong>：表示请求建立连接<br><strong>FIN</strong>：标志要通知对端本端的数据发送要关闭<br><strong>16位窗口大小</strong>：TCP流量控制的手段，告诉发送方本端的接收端缓冲区还能接受多少数据, 单位字节.<br><strong>16位校验和</strong>：由发送方填充，接收端用以检查TCP报文在传输过程中是否有损坏</p>
+<h5 id="可靠性"><a href="#可靠性" class="headerlink" title="可靠性"></a>可靠性</h5><h6 id="滑动窗口"><a href="#滑动窗口" class="headerlink" title="滑动窗口"></a>滑动窗口</h6><p>A根据B TCP ack报文中的窗口大小发送滑动窗口大小以内的若干数据给B, 给回复按序抵达的最大包序号, 即31. B不应过度拖延回复ack的时间.</p>
+<img src="./tcp_window.png" alt="image-20220128000255497" style="zoom:50%;" />
+
+<img src="./tcp_buffer.png" alt="image-20220128000641845" style="zoom:50%;" />
+
+<p>需注意, tcp是全双工通信, 每端都有自己的发送和接受窗口及缓冲. </p>
+<h6 id="超时重传时间-Retransmision-Time-out"><a href="#超时重传时间-Retransmision-Time-out" class="headerlink" title="超时重传时间 Retransmision Time out"></a>超时重传时间 Retransmision Time out</h6><img src="./tcp_rto.png" alt="image-20220128001439268" style="zoom:40%;" />
+
+<h6 id="选择确认ACK-Selective-ACK"><a href="#选择确认ACK-Selective-ACK" class="headerlink" title="选择确认ACK Selective ACK"></a>选择确认ACK Selective ACK</h6><p>SACK用于接收端向发送端报告部分未按序已收到的字节块, 从而避免重复传输. 需要tcp连接时 option增加SACK头, 双方确认支持SACK. 但是描述哪些数据已接受其实是比较复杂的, 尽管RFC2018有详细说明, 但使用还是较少, 大部分还是发送端重发所有未ack字节.</p>
+<img src="./tcp_sack.png" alt="image-20220128002718253" style="zoom:50%;" />
+
+
+
+<h5 id="TCP流量控制"><a href="#TCP流量控制" class="headerlink" title="TCP流量控制"></a>TCP流量控制</h5><h6 id="可利用滑动窗口控制发送方流量"><a href="#可利用滑动窗口控制发送方流量" class="headerlink" title="可利用滑动窗口控制发送方流量"></a>可利用滑动窗口控制发送方流量</h6><h6 id="TCP传输效率"><a href="#TCP传输效率" class="headerlink" title="TCP传输效率"></a>TCP传输效率</h6><p>应用程序把发送数据给到TCP缓存就不管了, 由TCP负责控制发送时机将数据正确的发送出去. 这是一个比较复杂的问题.</p>
+<ul>
+<li><p><strong>Nagle算法</strong></p>
+<p>TCP/IP协议中，无论发送多少数据，总是要在数据前面加上协议头，同时，对方接收到数据，也需要发送ACK表示确认。为了尽可能的利用网络带宽，TCP总是希望尽可能的发送足够大的数据。（一个连接会设置MSS参数，因此，TCP/IP希望每次都能够以MSS尺寸的数据块来发送数据）。Nagle算法就是为了尽可能发送大块数据，避免网络中充斥着许多小数据块。</p>
+<p>Nagle算法的基本定义是<strong>任意时刻，最多只能有一个未被确认的小段</strong>。 所谓“小段”，指的是小于MSS尺寸的数据块，所谓“未被确认”，是指一个数据块发送出去后，没有收到对方发送的ACK确认该数据已收到。</p>
+<p>Nagle算法的规则（可参考tcp_output.c文件里tcp_nagle_check函数注释）：</p>
+<p>（1）如果包长度达到MSS，则允许发送；</p>
+<p>（2）如果该包含有FIN，则允许发送；</p>
+<p>（3）设置了TCP_NODELAY选项，则允许发送；</p>
+<p>（4）未设置TCP_CORK选项时，若所有发出去的小数据包（包长度小于MSS）均被确认，则允许发送；</p>
+<p>（5）上述条件都未满足，但发生了超时（一般为200ms），则立即发送。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> there is new data to send <span class="comment">#有数据要发送</span></span><br><span class="line">    <span class="comment"># 发送窗口缓冲区和队列数据 &gt;=mss，队列数据（available data）为原有的队列数据加上新到来的数据</span></span><br><span class="line">    <span class="comment"># 也就是说缓冲区数据超过mss大小，nagle算法尽可能发送足够大的数据包</span></span><br><span class="line">    <span class="keyword">if</span> the window size &gt;= MSS and available data is &gt;= MSS </span><br><span class="line">        send complete MSS segment now <span class="comment"># 立即发送</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">if</span> there is unconfirmed data still <span class="keyword">in</span> the pipe <span class="comment"># 前一次发送的包没有收到ack</span></span><br><span class="line">            <span class="comment"># 将该包数据放入队列中，直到收到一个ack再发送缓冲区数据</span></span><br><span class="line">            enqueue data <span class="keyword">in</span> the buffer until an acknowledge is received </span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            send data immediately <span class="comment"># 立即发送</span></span><br><span class="line">        end <span class="keyword">if</span></span><br><span class="line">    end <span class="keyword">if</span></span><br><span class="line">end <span class="keyword">if</span>　</span><br></pre></td></tr></table></figure>
+
+<p>Nagle算法只允许一个未被ACK的包存在于网络，它并不管包的大小，因此它事实上就是一个扩展的停-等协议，只不过它是基于包停-等的，而不是基于字节停-等的。</p>
+</li>
+<li><p><strong>TCP确认延迟机制</strong></p>
+<p>当Server端收到数据之后，它并不会马上向client端发送ACK，而是会将ACK的发送延迟一段时间（假设为t），它希望在t时间内server端会向client端发送应答数据，这样ACK就能够和应答数据一起发送，就像是应答数据<strong>捎带着ACK</strong>过去。初始化是40ms。</p>
+</li>
+<li><p><strong>TCP_NODELAY 选项</strong></p>
+<p>默认情况下，发送数据采用Nagle 算法。这样虽然提高了<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E7%BD%91%E7%BB%9C%E5%90%9E%E5%90%90%E9%87%8F/646450">网络吞吐量</a>，但是实时性却降低了，在一些交互性很强的应用程序来说是不允许的，使用TCP_NODELAY选项可以禁止Nagle 算法。</p>
+<p>此时，应用程序向内核递交的每个数据包都会立即发送出去。需要注意的是，虽然禁止了Nagle 算法，但网络的传输仍然受到TCP确认延迟机制的影响。</p>
+</li>
+<li><p><strong>TCP_CORK 选项</strong></p>
+<p>所谓的CORK就是塞子的意思，形象地理解就是用CORK将连接塞住，使得数据先不发出去，等到拔去塞子后再发出去。设置该选项后，内核会尽力把小数据包拼接成一个大的数据包（一个MTU）再发送出去，当然若一定时间后（一般为200ms，该值尚待确认），内核仍然没有组合成一个MTU时也必须发送现有的数据（不可能让数据一直等待吧）。</p>
+</li>
+</ul>
+<h5 id="TCP拥塞控制"><a href="#TCP拥塞控制" class="headerlink" title="TCP拥塞控制"></a>TCP拥塞控制</h5><ul>
+<li><p>拥塞控制：防止过多的数据注入到网络中，这样可以使网络中的路由器或链路不致过载。拥塞控制所要做的都有一个前提：网络能够承受现有的网络负荷。拥塞控制是一个全局性的过程，涉及到所有的主机、路由器，以及与降低网络传输性能有关的所有因素。</p>
+</li>
+<li><p>流量控制：指点对点通信量的控制，是端到端的问题。流量控制所要做的就是抑制发送端发送的速率，以便使接收端来得及接收。</p>
+</li>
+</ul>
+<p>解决拥塞问题一般是以下步骤: 1) 监测网络, 探测拥塞的位置与时间;  2) 将拥塞信息发送到能采取控制的地方; 3) 调整网络参数.</p>
+<p>常用方法: 慢开始( slow-start )、拥塞避免( congestion avoidance )、快重传( fast retransmit )和快恢复( fast recovery )。</p>
+<h6 id="慢开始"><a href="#慢开始" class="headerlink" title="慢开始"></a>慢开始</h6><p>发送方维持一个拥塞窗口 cwnd ( congestion window )的状态变量。拥塞窗口的大小取决于网络的拥塞程度，并且动态地在变化。发送方让自己的发送窗口等于拥塞窗口。发送方控制拥塞窗口的原则是：只要网络没有出现拥塞，拥塞窗口就再增大一些，以便把更多的分组发送出去。但只要网络出现拥塞，拥塞窗口就减小一些，以减少注入到网络中的分组数。</p>
+<p>慢开始算法：当主机开始发送数据时，如果立即所大量数据字节注入到网络，那么就有可能引起网络拥塞，因为现在并不清楚网络的负荷情况。因此，较好的方法是先探测一下，即由小到大逐渐增大发送窗口，也就是说，由小到大逐渐增大拥塞窗口数值。通常在刚刚开始发送报文段时，先把拥塞窗口 cwnd 设置为一个最大报文段MSS的数值。而在每收到一个对新的报文段的确认后，把拥塞窗口增加至多一个MSS的数值。用这样的方法逐步增大发送方的拥塞窗口 cwnd ，可以使分组注入到网络的速率更加合理。 cwnd = 1, 2, 4, 8 …</p>
+<p>为了防止拥塞窗口cwnd增长过大引起网络拥塞，还需要设置一个慢开始门限ssthresh状态变量。慢开始门限ssthresh的用法如下：</p>
+<p>　　当 cwnd &lt; ssthresh 时，使用上述的慢开始算法<br>　　当 cwnd &gt; ssthresh 时，停止使用慢开始算法而改用拥塞避免算法<br>　　当 cwnd = ssthresh 时，既可使用慢开始算法，也可使用拥塞控制避免算法</p>
+<h6 id="拥塞避免"><a href="#拥塞避免" class="headerlink" title="拥塞避免"></a>拥塞避免</h6><p>让拥塞窗口cwnd缓慢地增大，即每经过一个往返时间RTT就把发送方的拥塞窗口cwnd加1，而不是加倍。这样拥塞窗口cwnd按线性规律缓慢增长，比慢开始算法的拥塞窗口增长速率缓慢得多。</p>
+<p>无论在慢开始阶段还是在拥塞避免阶段，只要发送方判断网络出现拥塞（其根据就是没有收到确认），就要把慢开始门限ssthresh设置为出现拥塞时的发送方窗口值的一半（但不能小于2）。然后把拥塞窗口cwnd重新设置为1，执行慢开始算法。这样做的目的就是要迅速减少主机发送到网络中的分组数，使得发生拥塞的路由器有足够时间把队列中积压的分组处理完毕。</p>
+<img src="./tcp_slow_start.png" alt="image-20220128190952845" style="zoom:40%;" />
+
+<h6 id="快重传和快恢复"><a href="#快重传和快恢复" class="headerlink" title="快重传和快恢复"></a>快重传和快恢复</h6><p>快重传算法首先要求接收方每收到一个报文段后(即便是后序)就立即发出重复确认（为的是使发送方及早知道有报文段没有到达对方），而不要等到自己发送数据时才进行捎带确认。当发送方连续收到三个重复确认，就执行“乘法减小”算法，把慢开始门限ssthresh减半。在采用快恢复算法时，慢开始算法只是在TCP连接建立时和网络出现超时时才使用。采用这样的拥塞控制方法使得TCP的性能有明显的改进。</p>
+<img src="./tcp_congest.png" alt="image-20220128190034654" style="zoom:50%;" />
+
+<h5 id="TCP连接管理"><a href="#TCP连接管理" class="headerlink" title="TCP连接管理"></a>TCP连接管理</h5><h6 id="三次握手"><a href="#三次握手" class="headerlink" title="三次握手"></a>三次握手</h6><p>三次握手是为了建立连接, 双方确认对方的存在,并协商一些参数,如窗口大小 , 初始化一下缓冲队列资源等. 为了确认双方存在, 头两次sync, sync+ack是 省不了的, 那第三次ack是为了做什么呢? 是为了避免已失效的sync请求又抵达B, 又消耗B的资源. 有了第三次ack, 当无效的syn被server sync+ack后, client不会回复ack, 超时后server也就会再销毁掉对应资源.</p>
+<img src="./tcp_handshake.png" alt="image-20220129000032602" style="zoom:50%;" />
+
+<h6 id="四次挥手"><a href="#四次挥手" class="headerlink" title="四次挥手"></a>四次挥手</h6><img src="./tcp_bye_handshake.png" alt="image-20220129002627713" style="zoom:50%;" />
+
+<p><strong>MSL</strong>: Max Segment lifetime, 报文端最大寿命. </p>
+<p>为什么A收到 FIN 后要等两个MSL呢? </p>
+<ol>
+<li>确保能回复FIN的ack, 如果B没收到ack, 会重新发送FIN+ACK. 这时如果A已经断了, B就只能自己特殊处理到CLOSED状态.</li>
+<li>尽量让本次连接 网络中的网络包都传输完, 不会在新连接中收到旧连接报文.</li>
+</ol>
+<h5 id="TCP有限状态机"><a href="#TCP有限状态机" class="headerlink" title="TCP有限状态机"></a>TCP有限状态机</h5><img src="./tcp_state.png" alt="image-20220129152318656" style="zoom:50%;" />
+
+
+
+<h4 id="应用层"><a href="#应用层" class="headerlink" title="应用层"></a>应用层</h4><h2 id="应用层常用协议"><a href="#应用层常用协议" class="headerlink" title="应用层常用协议"></a>应用层常用协议</h2><h3 id="DNS"><a href="#DNS" class="headerlink" title="DNS"></a>DNS</h3><p>基于UDP, <strong>53</strong>端口:  query请求(src port: 12868 , dst port: 53 ) + response响应(src port: 53, dst port: 12868 )</p>
+<p>迭代查询 or 递归查询 + 缓存. </p>
+<p><strong>解析顺序</strong>: 浏览器缓存, 系统缓存, 路由器DNS缓存 , ISP DNS 缓存, 根域名服务器, 顶级域名服务器, 主域名服务器, 保存结果至缓存.</p>
+<img src="./dns.png" alt="image-20220129165409193" style="zoom:40%;" />
+
+<h3 id="HTTP"><a href="#HTTP" class="headerlink" title="HTTP"></a>HTTP</h3><p>HTTP协议发展历程:</p>
+<p>![image-20220127112311050](/Users/talentxiet/Library/Application Support/typora-user-images/image-20220127112311050.png)</p>
+<p>协议格式:</p>
+<img src="./http_protocol.png" alt="image-20220130002354946" style="zoom:50%;" />
+
+<h3 id="SMTP"><a href="#SMTP" class="headerlink" title="SMTP"></a>SMTP</h3><img src="./smtp.png" alt="image-20220130002634963" style="zoom:45%;" />
+
+<h3 id="DHCP"><a href="#DHCP" class="headerlink" title="DHCP"></a>DHCP</h3><img src="./dhcp.png" alt="image-20220130221121647" style="zoom:50%;" />
+
+<h2 id="应用程序间通信过程"><a href="#应用程序间通信过程" class="headerlink" title="应用程序间通信过程"></a>应用程序间通信过程</h2><h3 id="系统调用-amp-socket套接字"><a href="#系统调用-amp-socket套接字" class="headerlink" title="系统调用&amp;socket套接字"></a>系统调用&amp;socket套接字</h3><img src="./syscall.png" alt="image-20220130221429374" style="zoom:50%;" />
+
+<img src="./socket2.png" alt="image-20220130224749539" style="zoom:50%;" />
+
+
+
+<h2 id="网络安全"><a href="#网络安全" class="headerlink" title="网络安全"></a>网络安全</h2><p>四个目标:</p>
+<ul>
+<li>保密性</li>
+<li>端点鉴别</li>
+<li>信息完整性</li>
+<li>运行安全性 访问控制</li>
+</ul>
+<img src="./net_sec_key.png" alt="image-20220205185347484" style="zoom:50%;" />
+
+<h3 id="DES-AES"><a href="#DES-AES" class="headerlink" title="DES AES"></a>DES AES</h3><p>data encryption standard,  advanced encrytion standard, 对称加密、</p>
+<h3 id="公钥密码体制"><a href="#公钥密码体制" class="headerlink" title="公钥密码体制"></a>公钥密码体制</h3><p>任何加解密算法的安全性都取决于密钥长度,以及攻破密文的计算量</p>
+<h3 id="数字签名"><a href="#数字签名" class="headerlink" title="数字签名"></a>数字签名</h3><p>目标:</p>
+<ul>
+<li>接收者能核实发送者对报文的数字签名, 即是发送者发的</li>
+<li>收到的数据是完整的</li>
+<li>发送者事后不可抵赖数字签名</li>
+</ul>
+<img src="./signature.png" alt="image-20220205191312308" style="zoom:50%;" />
+
+<h3 id="报文鉴别"><a href="#报文鉴别" class="headerlink" title="报文鉴别"></a>报文鉴别</h3><p>加解密算法可以实现报文鉴别,但是消耗cpu, 所以常用密码散列算法保护数据完整性. MD5 (message digest 第五代)和 SHA-1,2,3(secure hash algorithm).</p>
+<img src="./sec_mac.png" alt="image-20220205193055077" style="zoom:50%;" />
+
+<p>MAC: message authentication code,</p>
+<h3 id="密钥分配"><a href="#密钥分配" class="headerlink" title="密钥分配"></a>密钥分配</h3><h4 id="对称密钥分配"><a href="#对称密钥分配" class="headerlink" title="对称密钥分配"></a>对称密钥分配</h4><p>对称密钥是一对一的, 任意双方通信都要有唯一的key, 通常由KDC动态随机分配</p>
+<img src="./对称密钥分配.png" alt="image-20220205195510847" style="zoom:50%;" />
+
+<h4 id="公钥分配"><a href="#公钥分配" class="headerlink" title="公钥分配"></a>公钥分配</h4><p>由受信任的机构维护公钥和实体的关系, 通常是政府机构, 称之为CA (certification authority), 每个实体会被颁布 证书(certificate), 证书中包含拥有者标示, 公钥, 且此证书被CA进行了数字签名. 公众可以从机构公开信息中获取到机构的公钥, 对签名和 证书信息进行验证.</p>
+<p>为了使CA拥有统一格式, IETF接受了ITU制定的X.509规范.</p>
+<h3 id="互联网中的安全协议"><a href="#互联网中的安全协议" class="headerlink" title="互联网中的安全协议"></a>互联网中的安全协议</h3><h4 id="网络层-1"><a href="#网络层-1" class="headerlink" title="网络层"></a>网络层</h4><h5 id="IPsec"><a href="#IPsec" class="headerlink" title="IPsec"></a>IPsec</h5><img src="./ipsec.png" alt="image-20220206000051358" style="zoom:50%;" />
+
+<h4 id="传输层-1"><a href="#传输层-1" class="headerlink" title="传输层"></a>传输层</h4><h5 id="SSL"><a href="#SSL" class="headerlink" title="SSL"></a>SSL</h5><p>Secure Socket Layer, Netscape开发, 95年交给IETF</p>
+<img src="./ssl.png" alt="image-20220206001829432" style="zoom:50%;" />
+
+<img src="./ssl_procedure.png" alt="image-20220206002408083" style="zoom:50%;" />
+
+<h5 id="TLS"><a href="#TLS" class="headerlink" title="TLS"></a>TLS</h5><p>Transport Layer Security, 基于SSL3.0设计. </p>
+<h3 id="防火墙"><a href="#防火墙" class="headerlink" title="防火墙"></a>防火墙</h3><p>是一种访问控制技术, 通常是特殊编程的路由器, 进行访问策略控制. </p>
+<ul>
+<li>分组过滤路由器: 根据 源/目的 IP/端口 协议类型进行分组过滤控制.</li>
+<li>应用网关: 应用层网关, 根据应用层报文鉴权转发</li>
+</ul>
+<h2 id="实时音视频相关协议"><a href="#实时音视频相关协议" class="headerlink" title="实时音视频相关协议"></a>实时音视频相关协议</h2><img src="./av_protocols.png" alt="image-20220206165809797" style="zoom:50%;" />
+
+<h3 id="RTP"><a href="#RTP" class="headerlink" title="RTP"></a>RTP</h3><img src="./rtp_protocol.png" alt="image-20220206165710831" style="zoom:50%;" />
+
+<h3 id="RTCP"><a href="#RTCP" class="headerlink" title="RTCP"></a>RTCP</h3><img src="./rtcp.png" alt="image-20220206172316751" style="zoom:50%;" />
+
+<h2 id="常见网络设备"><a href="#常见网络设备" class="headerlink" title="常见网络设备"></a>常见网络设备</h2><h3 id="Repeater中继器"><a href="#Repeater中继器" class="headerlink" title="Repeater中继器"></a>Repeater中继器</h3><p>中继器是一个将输入信号增强放大的设备, 把信号送得更远，以延展网络长度. 与具体信号形式无关,比如卫星雷达, 以太网集线器; 属于物理层</p>
+<h3 id="Hub集线器"><a href="#Hub集线器" class="headerlink" title="Hub集线器"></a>Hub集线器</h3><p>集线器（Ethernet hub）是指将多条以太网双绞线或光纤集合连接在同一段物理介质下的设备。集线器运作在OSI模型中的物理层，可以让其链接的设备工作在同一网段。集线器上有多个I/O端口，信号从任意一个端口进入后，会从其他端口出现. </p>
+<p>由于集线器会把收到的任何数字信号，从集线器的所有端口提交，这会造成信号之间碰撞的机会很大，而且信号也可能被窃听，并且这代表所有连到集线器的设备，都是属于同一个冲突网域以及广播网域(hub间组网所有hub都属于同一广播域), 冲突和泛洪严重，因此大部分Hub已被Switch代替.</p>
+<img src="./hub_pic.png" alt="image-20220121154139634" style="zoom:35%;" />
+
+<h3 id="Bridge网桥"><a href="#Bridge网桥" class="headerlink" title="Bridge网桥"></a>Bridge网桥</h3><p>网桥工作在第二层数据链路层, 可以解析出链路层数据包, 并在Bridge内维护每个端口和连接着的设备MAC地址映射关系, 从而可以动态判断是否要转发收到的物理帧, 从而在一定程度上解决hub间的泛洪问题.</p>
+<img src="/Users/talentxiet/Desktop/我的学习文档/网络基础/bridge_pic.png" alt="image-20220121155228284" style="zoom:50%;" />
+
+<h3 id="Switch交换机"><a href="#Switch交换机" class="headerlink" title="Switch交换机"></a>Switch交换机</h3><p>二层交换机: 二层交换机工作在数据链路层, 相比Hub, 它可以解析物理帧中的链路层frame信息,并基于frame中的mac地址与交换机端口进行缓存映射, 从而高效的解决Hub的冲突, 泛洪等问题. 此外交换机通常还支持划分VLAN的功能, VLAN可以创建相互隔离的子LAN, 从而缩小广播域大小. </p>
+<img src="./switch_pic.png" alt="image-20220121160921808" style="zoom:55%;" />
+
+<p>交换机组网示例:</p>
+<img src="./switch_net.png" alt="image-20220122201304858" style="zoom:50%;" />
+
+<p>三层交换机: 三层交换机在交换机的基础之上加了网络层协议的解析能力, 以及一些简单的三层路由功能. 不过它的主要功能还是交换机的，同时它的价格比路由器价格偏低，实用性更高。</p>
+<p>一个真实的交换机图片如下所示:</p>
+<img src="./real_switch.png" alt="image-20220122202630798" style="zoom:38%;" />
+
+<h3 id="Router路由器-网关"><a href="#Router路由器-网关" class="headerlink" title="Router路由器 (网关)"></a>Router路由器 (网关)</h3><p>讲到路由器,我们要先讲一下IP子网和网关(Gateway), IP地址+掩码标示了IP网段, 不同网段间的网络相互隔离. 而网关, 顾名思义, 就是不同网络间连接的关口, 在网络层上实现网络连通. 网关概念也可延伸到应用服务网关, 这里我们讨论的均指TCP/IP协议下网关.</p>
+<p>在TCP/IP协议的系统内核层, 会在网络层向链路层封包时, 检测目标IP与源IP是否在同一子网, 如果在同一子网, 封包时的对端MAC地址通过ARP协议获取; 而当不在同一子网时, 会使用网关的MAC作为目标MAC地址. 可以用下图思考一下, 不同子网间通信时的隔离性到底是如何实现的? </p>
+<img src="./ip_group_question.png" alt="image-20220122220139210" style="zoom:40%;" />
+
+<p>不同的IP网段可以设置不同的网关地址, 从而细粒度的控制流量出口. 一个默认macos下的路由表配置如下, 该机器ip为192.168.0.108, default网关为192.168.0.1, 访问127.0.0.1时会loopback到自己网卡, 访问192.168.0/24网段时会在en0网卡所处的进行链路层进行二层数据通信. </p>
+<img src="./routing_table.png" alt="image-20220122215006525" style="zoom:50%;" />
+
+<p>路由器实现了网关的功能, 它工作的三层网络层, 可以实现三层协议的解包路由等功能. 当然路由器还有很多其他功能, 比如NAT等. </p>
+<p>路由器上会有很多网口, 可以按用处分为WAN口和LAN口, WAN口指的是接入其他Wide Area Network广域网的网口, LAN口指的是接入路由器内部Local Area Network局域网的网口. 往往内部LAN还支持Wifi的接入, 成为Wireless LAN (WLAN).  每个WAN口均可以提供三层能力, 即可配置独立的MAC及IP地址(独立网卡); LAN口则往往只具备二层传输能力, 提供交换机的功能. 具备三层能力的LAN口可以通过路由器配置作为WAN口服务.</p>
+<img src="/Users/talentxiet/Desktop/我的学习文档/网络基础/router_wan_lan.png" alt="router_wan_lan" style="zoom:40%;" />
+
+<p>当路由器要串联多组子网时, 若想要子网间按期望进行通信的话, 就需要正确配置Router的路由表了. 路由表比较核心的三个配置属性是Destination, Gateway 和 Interface. </p>
+<p>Destination可以是网段, Host或者default (均不匹配时), 路由器网卡收到frame并解出目标IP后, 会逐一进行匹配, 匹配到对应记录后, 会按路由表配置, 将frame的目标MAC地址转换为所配网关的MAC地址, 并通过指定配置的Interface发送出去. 当没配置网关时, 会在Interface广播域对目标IP进行广播寻址.</p>
+<img src="/Users/talentxiet/Desktop/我的学习文档/网络基础/router_trans.png" alt="router_transfer" style="zoom:36%;" />
+
+<img src="./router_trans2.png" alt="image-20220124222512944" style="zoom:50%;" />
+
+<p>一个真实企业级路由器的图片如下: </p>
+<img src="/Users/talentxiet/Desktop/我的学习文档/网络基础/real_router.png" alt="image-20220122203856676" style="zoom:45%;" />
+
+<h3 id="F5"><a href="#F5" class="headerlink" title="F5"></a>F5</h3><p>F5是一家美国公司, 卖的F5设备可提供4-7层的解包和路由能力, 相比工作于网络层的Router其功能就更丰富了. 包括负载均衡，应用状态监控，高可用性保障，广域流量管理，链路控制；内容转换，高速缓存，SSL加速和卸载等能力等等.</p>
+<img src="./real_f5.png" alt="image-20220122205509626" style="zoom:60%;" />
+
+<h2 id="真实组网案例"><a href="#真实组网案例" class="headerlink" title="真实组网案例"></a>真实组网案例</h2><h3 id="公共网络"><a href="#公共网络" class="headerlink" title="公共网络"></a>公共网络</h3><h3 id="家庭网络"><a href="#家庭网络" class="headerlink" title="家庭网络"></a>家庭网络</h3><h2 id="Glossary"><a href="#Glossary" class="headerlink" title="Glossary:"></a>Glossary:</h2><h3 id="Ethernet-以太网"><a href="#Ethernet-以太网" class="headerlink" title="Ethernet 以太网"></a>Ethernet 以太网</h3><p>以太网(Ethernet)是一种计算机局域网技术, 提出于1980s。IEEE组织的IEEE 802.3标准制定了以太网的技术标准, 后续延伸出了802.3~11标准，它规定了包括物理层的连线、电子信号和介质访问层协议的内容。以太网是当前应用最普遍的局域网技术，取代了其他局域网标准如令牌环、FDDI 和 ARCNET。</p>
+<h3 id="广播域-broadcast-domain"><a href="#广播域-broadcast-domain" class="headerlink" title="广播域 broadcast domain"></a>广播域 broadcast domain</h3><p>广播域（Broadcast domain）是计算机网络的一个逻辑划分。广播域中的任意一个节点可以在数据链路层通过广播的方式到达任意一个节点。广播域可以处于同一个局域网内,也可以被桥接到其他的局域网。</p>
+<p>根据目前的流行技术，任意连接到同一 repeater 或者 switch 的电脑属于同一个广播域，并且任意连接到同一个inter-connected的 repeater 或 switch 的集合的电脑也是属于同一个广播域的。而 Router 和其他high-level devices会在广播域间形成隔离。</p>
+<h3 id="冲突域-collision-domain"><a href="#冲突域-collision-domain" class="headerlink" title="冲突域 collision domain"></a>冲突域 collision domain</h3><p>与广播域相对的是冲突域。冲突域中所有节点都链接到同一个被集线器、交换机和学习型网桥划分的相互连接的中继器集合。冲突域一般来说小于或者包含在广播域中。 冲突域下的碰撞问题通过CSMA/CD (Carrier-sense multiple access)解决.</p>
+<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><h3 id="traceroute实现"><a href="#traceroute实现" class="headerlink" title="traceroute实现"></a>traceroute实现</h3><p>向目标ip发送ICMP echo包或随机30000+大端口发送udp包,  通过TTL和ICMP结果返回报文判断路由点地址和通信时间.</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/03/18/coding-guidelines/" rel="prev" title="编程规范">
+                编程规范 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%B1%82%E6%A8%A1%E5%9E%8B-OSI-model"><span class="nav-number">1.</span> <span class="nav-text">分层模型 OSI model</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Definitions"><span class="nav-number">1.1.</span> <span class="nav-text">Definitions:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Layer-architecture"><span class="nav-number">1.2.</span> <span class="nav-text">Layer architecture</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Layer-1-Physical-layer"><span class="nav-number">1.2.1.</span> <span class="nav-text">Layer 1: Physical layer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Layer-2-Data-link-layer"><span class="nav-number">1.2.2.</span> <span class="nav-text">Layer 2: Data link layer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Layer-3-Network-layer"><span class="nav-number">1.2.3.</span> <span class="nav-text">Layer 3: Network layer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Layer-4-Transport-layer"><span class="nav-number">1.2.4.</span> <span class="nav-text">Layer 4: Transport layer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Layer-5-Session-layer"><span class="nav-number">1.2.5.</span> <span class="nav-text">Layer 5: Session layer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Layer-6-Presentation-layer"><span class="nav-number">1.2.6.</span> <span class="nav-text">Layer 6: Presentation layer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Layer-7-Application-layer"><span class="nav-number">1.2.7.</span> <span class="nav-text">Layer 7: Application layer</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Protocol-stack-examples"><span class="nav-number">1.3.</span> <span class="nav-text">Protocol stack examples</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#BLE-protocol-stack"><span class="nav-number">1.3.1.</span> <span class="nav-text">BLE protocol stack</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%B1%82%E6%A8%A1%E5%9E%8B%E2%80%94%E2%80%94TCP-IP%E6%A8%A1%E5%9E%8B%E5%8F%8A%E5%8D%8F%E8%AE%AE%E6%97%8F"><span class="nav-number">2.</span> <span class="nav-text">分层模型——TCP&#x2F;IP模型及协议族</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%A9%E7%90%86%E5%B1%82"><span class="nav-number">2.1.</span> <span class="nav-text">物理层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82"><span class="nav-number">2.2.</span> <span class="nav-text">数据链路层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E5%B1%82"><span class="nav-number">2.3.</span> <span class="nav-text">网络层</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#IP%E5%8D%8F%E8%AE%AE"><span class="nav-number">2.3.1.</span> <span class="nav-text">IP协议</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ICMP%E5%8D%8F%E8%AE%AE"><span class="nav-number">2.3.2.</span> <span class="nav-text">ICMP协议</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1%E9%80%89%E6%8B%A9%E5%8D%8F%E8%AE%AE"><span class="nav-number">2.3.3.</span> <span class="nav-text">路由选择协议</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%A0%E8%BE%93%E5%B1%82"><span class="nav-number">2.4.</span> <span class="nav-text">传输层</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#UDP"><span class="nav-number">2.4.1.</span> <span class="nav-text">UDP</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%89%B9%E7%82%B9"><span class="nav-number">2.4.1.1.</span> <span class="nav-text">特点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8D%8F%E8%AE%AE%E6%A0%BC%E5%BC%8F"><span class="nav-number">2.4.1.2.</span> <span class="nav-text">协议格式</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TCP"><span class="nav-number">2.4.2.</span> <span class="nav-text">TCP</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%89%B9%E7%82%B9-1"><span class="nav-number">2.4.2.1.</span> <span class="nav-text">特点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8D%8F%E8%AE%AE%E6%A0%BC%E5%BC%8F-1"><span class="nav-number">2.4.2.2.</span> <span class="nav-text">协议格式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%AF%E9%9D%A0%E6%80%A7"><span class="nav-number">2.4.2.3.</span> <span class="nav-text">可靠性</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3"><span class="nav-number">2.4.2.3.1.</span> <span class="nav-text">滑动窗口</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%B6%85%E6%97%B6%E9%87%8D%E4%BC%A0%E6%97%B6%E9%97%B4-Retransmision-Time-out"><span class="nav-number">2.4.2.3.2.</span> <span class="nav-text">超时重传时间 Retransmision Time out</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%80%89%E6%8B%A9%E7%A1%AE%E8%AE%A4ACK-Selective-ACK"><span class="nav-number">2.4.2.3.3.</span> <span class="nav-text">选择确认ACK Selective ACK</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#TCP%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6"><span class="nav-number">2.4.2.4.</span> <span class="nav-text">TCP流量控制</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%8F%AF%E5%88%A9%E7%94%A8%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E6%8E%A7%E5%88%B6%E5%8F%91%E9%80%81%E6%96%B9%E6%B5%81%E9%87%8F"><span class="nav-number">2.4.2.4.1.</span> <span class="nav-text">可利用滑动窗口控制发送方流量</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#TCP%E4%BC%A0%E8%BE%93%E6%95%88%E7%8E%87"><span class="nav-number">2.4.2.4.2.</span> <span class="nav-text">TCP传输效率</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#TCP%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6"><span class="nav-number">2.4.2.5.</span> <span class="nav-text">TCP拥塞控制</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%85%A2%E5%BC%80%E5%A7%8B"><span class="nav-number">2.4.2.5.1.</span> <span class="nav-text">慢开始</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%8B%A5%E5%A1%9E%E9%81%BF%E5%85%8D"><span class="nav-number">2.4.2.5.2.</span> <span class="nav-text">拥塞避免</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%BF%AB%E9%87%8D%E4%BC%A0%E5%92%8C%E5%BF%AB%E6%81%A2%E5%A4%8D"><span class="nav-number">2.4.2.5.3.</span> <span class="nav-text">快重传和快恢复</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#TCP%E8%BF%9E%E6%8E%A5%E7%AE%A1%E7%90%86"><span class="nav-number">2.4.2.6.</span> <span class="nav-text">TCP连接管理</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B"><span class="nav-number">2.4.2.6.1.</span> <span class="nav-text">三次握手</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B"><span class="nav-number">2.4.2.6.2.</span> <span class="nav-text">四次挥手</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#TCP%E6%9C%89%E9%99%90%E7%8A%B6%E6%80%81%E6%9C%BA"><span class="nav-number">2.4.2.7.</span> <span class="nav-text">TCP有限状态机</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%B1%82"><span class="nav-number">2.4.3.</span> <span class="nav-text">应用层</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%B1%82%E5%B8%B8%E7%94%A8%E5%8D%8F%E8%AE%AE"><span class="nav-number">3.</span> <span class="nav-text">应用层常用协议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#DNS"><span class="nav-number">3.1.</span> <span class="nav-text">DNS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP"><span class="nav-number">3.2.</span> <span class="nav-text">HTTP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SMTP"><span class="nav-number">3.3.</span> <span class="nav-text">SMTP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DHCP"><span class="nav-number">3.4.</span> <span class="nav-text">DHCP</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E9%97%B4%E9%80%9A%E4%BF%A1%E8%BF%87%E7%A8%8B"><span class="nav-number">4.</span> <span class="nav-text">应用程序间通信过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8-amp-socket%E5%A5%97%E6%8E%A5%E5%AD%97"><span class="nav-number">4.1.</span> <span class="nav-text">系统调用&amp;socket套接字</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8"><span class="nav-number">5.</span> <span class="nav-text">网络安全</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#DES-AES"><span class="nav-number">5.1.</span> <span class="nav-text">DES AES</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AC%E9%92%A5%E5%AF%86%E7%A0%81%E4%BD%93%E5%88%B6"><span class="nav-number">5.2.</span> <span class="nav-text">公钥密码体制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D"><span class="nav-number">5.3.</span> <span class="nav-text">数字签名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%A5%E6%96%87%E9%89%B4%E5%88%AB"><span class="nav-number">5.4.</span> <span class="nav-text">报文鉴别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%86%E9%92%A5%E5%88%86%E9%85%8D"><span class="nav-number">5.5.</span> <span class="nav-text">密钥分配</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%B9%E7%A7%B0%E5%AF%86%E9%92%A5%E5%88%86%E9%85%8D"><span class="nav-number">5.5.1.</span> <span class="nav-text">对称密钥分配</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%AC%E9%92%A5%E5%88%86%E9%85%8D"><span class="nav-number">5.5.2.</span> <span class="nav-text">公钥分配</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%92%E8%81%94%E7%BD%91%E4%B8%AD%E7%9A%84%E5%AE%89%E5%85%A8%E5%8D%8F%E8%AE%AE"><span class="nav-number">5.6.</span> <span class="nav-text">互联网中的安全协议</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E5%B1%82-1"><span class="nav-number">5.6.1.</span> <span class="nav-text">网络层</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#IPsec"><span class="nav-number">5.6.1.1.</span> <span class="nav-text">IPsec</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%A0%E8%BE%93%E5%B1%82-1"><span class="nav-number">5.6.2.</span> <span class="nav-text">传输层</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#SSL"><span class="nav-number">5.6.2.1.</span> <span class="nav-text">SSL</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#TLS"><span class="nav-number">5.6.2.2.</span> <span class="nav-text">TLS</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%B2%E7%81%AB%E5%A2%99"><span class="nav-number">5.7.</span> <span class="nav-text">防火墙</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E6%97%B6%E9%9F%B3%E8%A7%86%E9%A2%91%E7%9B%B8%E5%85%B3%E5%8D%8F%E8%AE%AE"><span class="nav-number">6.</span> <span class="nav-text">实时音视频相关协议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RTP"><span class="nav-number">6.1.</span> <span class="nav-text">RTP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RTCP"><span class="nav-number">6.2.</span> <span class="nav-text">RTCP</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E7%BD%91%E7%BB%9C%E8%AE%BE%E5%A4%87"><span class="nav-number">7.</span> <span class="nav-text">常见网络设备</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Repeater%E4%B8%AD%E7%BB%A7%E5%99%A8"><span class="nav-number">7.1.</span> <span class="nav-text">Repeater中继器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hub%E9%9B%86%E7%BA%BF%E5%99%A8"><span class="nav-number">7.2.</span> <span class="nav-text">Hub集线器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Bridge%E7%BD%91%E6%A1%A5"><span class="nav-number">7.3.</span> <span class="nav-text">Bridge网桥</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Switch%E4%BA%A4%E6%8D%A2%E6%9C%BA"><span class="nav-number">7.4.</span> <span class="nav-text">Switch交换机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Router%E8%B7%AF%E7%94%B1%E5%99%A8-%E7%BD%91%E5%85%B3"><span class="nav-number">7.5.</span> <span class="nav-text">Router路由器 (网关)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#F5"><span class="nav-number">7.6.</span> <span class="nav-text">F5</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9C%9F%E5%AE%9E%E7%BB%84%E7%BD%91%E6%A1%88%E4%BE%8B"><span class="nav-number">8.</span> <span class="nav-text">真实组网案例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AC%E5%85%B1%E7%BD%91%E7%BB%9C"><span class="nav-number">8.1.</span> <span class="nav-text">公共网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%B6%E5%BA%AD%E7%BD%91%E7%BB%9C"><span class="nav-number">8.2.</span> <span class="nav-text">家庭网络</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Glossary"><span class="nav-number">9.</span> <span class="nav-text">Glossary:</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Ethernet-%E4%BB%A5%E5%A4%AA%E7%BD%91"><span class="nav-number">9.1.</span> <span class="nav-text">Ethernet 以太网</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%BF%E6%92%AD%E5%9F%9F-broadcast-domain"><span class="nav-number">9.2.</span> <span class="nav-text">广播域 broadcast domain</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%B2%E7%AA%81%E5%9F%9F-collision-domain"><span class="nav-number">9.3.</span> <span class="nav-text">冲突域 collision domain</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">10.</span> <span class="nav-text">常用命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#traceroute%E5%AE%9E%E7%8E%B0"><span class="nav-number">10.1.</span> <span class="nav-text">traceroute实现</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">谢天帝</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
