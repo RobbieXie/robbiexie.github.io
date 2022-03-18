@@ -104,4 +104,4 @@ theme: next
 deploy:
   type: git
   repo: https://github.com/RobbieXie/robbiexie.github.io.git
-  branch: main
+  branch: gh-pages
