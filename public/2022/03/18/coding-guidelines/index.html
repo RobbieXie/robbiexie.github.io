@@ -82,27 +82,27 @@
 <meta name="description" content="目录 Git分支管理规范  常用分支说明 操作流程实例   设计规范  前言  阿里设计规约  本组UML图示例    阿里巴巴Java开发规范解读   Git分支管理规范常用分支说明master分支: 线上版本分支, 对应线上的每一个版本, 用tag标记 保护分支, 不允许在该分支直接提代码 稳定长期存在  develop分支: 开发分支, 包含所有最新功能和代码, 所有开发基于此分支进行 保护">
 <meta property="og:type" content="article">
 <meta property="og:title" content="编程规范">
-<meta property="og:url" content="https://robbiexie.github.io/2022/03/16/coding-guidelines/index.html">
+<meta property="og:url" content="https://robbiexie.github.io/2022/03/18/coding-guidelines/index.html">
 <meta property="og:site_name" content="RobbieXie&#39;s Blog">
 <meta property="og:description" content="目录 Git分支管理规范  常用分支说明 操作流程实例   设计规范  前言  阿里设计规约  本组UML图示例    阿里巴巴Java开发规范解读   Git分支管理规范常用分支说明master分支: 线上版本分支, 对应线上的每一个版本, 用tag标记 保护分支, 不允许在该分支直接提代码 稳定长期存在  develop分支: 开发分支, 包含所有最新功能和代码, 所有开发基于此分支进行 保护">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://robbiexie.github.io/2022/03/16/coding-guidelines/git-0.png">
-<meta property="og:image" content="https://robbiexie.github.io/2022/03/16/coding-guidelines/git-1-1.png">
-<meta property="og:image" content="https://robbiexie.github.io/2022/03/16/coding-guidelines/git-1.png">
-<meta property="og:image" content="https://robbiexie.github.io/Users/talentxiet/Library/Application%20Support/typora-user-images/image-20220316160610988.png">
-<meta property="og:image" content="https://robbiexie.github.io/2022/03/16/coding-guidelines/git-3.png">
-<meta property="og:image" content="https://robbiexie.github.io/2022/03/16/coding-guidelines/git-4.png">
-<meta property="og:image" content="https://robbiexie.github.io/2022/03/16/coding-guidelines/git-5.png">
-<meta property="og:image" content="https://robbiexie.github.io/2022/03/16/coding-guidelines/design-1.png">
-<meta property="og:image" content="https://robbiexie.github.io/2022/03/16/coding-guidelines/design1.png">
-<meta property="og:image" content="https://robbiexie.github.io/2022/03/16/coding-guidelines/design2.png">
-<meta property="og:image" content="https://robbiexie.github.io/2022/03/16/coding-guidelines/design3.png">
-<meta property="og:image" content="https://robbiexie.github.io/2022/03/16/coding-guidelines/design4.png">
-<meta property="article:published_time" content="2022-03-16T08:23:38.820Z">
-<meta property="article:modified_time" content="2022-03-18T03:53:46.731Z">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/18/coding-guidelines/git-0.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/18/coding-guidelines/git-1-1.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/18/coding-guidelines/git-1.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/18/coding-guidelines/git-miss.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/18/coding-guidelines/git-3.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/18/coding-guidelines/git-4.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/18/coding-guidelines/git-5.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/18/coding-guidelines/design-1.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/18/coding-guidelines/design1.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/18/coding-guidelines/design2.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/18/coding-guidelines/design3.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/18/coding-guidelines/design4.png">
+<meta property="article:published_time" content="2022-03-18T08:51:43.524Z">
+<meta property="article:modified_time" content="2022-03-18T09:51:47.811Z">
 <meta property="article:author" content="谢天帝">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://robbiexie.github.io/2022/03/16/coding-guidelines/git-0.png">
+<meta name="twitter:image" content="https://robbiexie.github.io/2022/03/18/coding-guidelines/git-0.png">
 
 
 
@@ -132,7 +132,7 @@
 
 
 
-  <link rel="canonical" href="https://robbiexie.github.io/2022/03/16/coding-guidelines/"/>
+  <link rel="canonical" href="https://robbiexie.github.io/2022/03/18/coding-guidelines/"/>
 
 
 
@@ -235,7 +235,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://robbiexie.github.io/2022/03/16/coding-guidelines/">
+    <link itemprop="mainEntityOfPage" href="https://robbiexie.github.io/2022/03/18/coding-guidelines/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="">
@@ -264,8 +264,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2022-03-16T16:23:38+08:00">
-                2022-03-16
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2022-03-18T16:51:43+08:00">
+                2022-03-18
               </time>
             
 
@@ -364,7 +364,7 @@
 <ul>
 <li>从该commit切出release分支 , 发布到UAT环境 并交给测试和业务同事验证功能, 如符合预期 则使用该版本应用包上线. 上线完成后合并至 master 分支.</li>
 </ul>
-<img src="/Users/talentxiet/Library/Application Support/typora-user-images/image-20220316160610988.png" alt="image-20220316160610988" style="zoom:50%;" />
+<img src="./git-miss.png" alt="image-20220316160610988" style="zoom:50%;" />
 
 <ul>
 <li>若该release分支测试时出了问题, 则直接在该分支修复问题. 知道符合预期后 发布生产, 并将新改动合并至master和develop分支.</li>
@@ -393,18 +393,21 @@
 </li>
 <li>代码或项目开发完成后,  如何验证符合预期?  -&gt; 遵循文档约定</li>
 </ul>
-<h3 id="阿里设计规约"><a href="#阿里设计规约" class="headerlink" title="阿里设计规约"></a>阿里设计规约</h3><img src="/2022/03/16/coding-guidelines/design-1.png" class="" title="image-20220318111434810">
+<h3 id="阿里设计规约"><a href="#阿里设计规约" class="headerlink" title="阿里设计规约"></a>阿里设计规约</h3><img src="/2022/03/18/coding-guidelines/design-1.png" class="" title="image-20220318111434810">
 
 <h3 id="本组UML图示例"><a href="#本组UML图示例" class="headerlink" title="本组UML图示例"></a>本组UML图示例</h3><p>我们组开发的一个电话系统</p>
-<h4 id="1-一通电话生命周期的状态图"><a href="#1-一通电话生命周期的状态图" class="headerlink" title="1. 一通电话生命周期的状态图:"></a>1. 一通电话生命周期的状态图:</h4><img src="/2022/03/16/coding-guidelines/design1.png" class="" title="image-20220318112715504">
+<h4 id="1-一通电话生命周期的状态图"><a href="#1-一通电话生命周期的状态图" class="headerlink" title="1. 一通电话生命周期的状态图:"></a>1. 一通电话生命周期的状态图:</h4><img src="/2022/03/18/coding-guidelines/design1.png" class="" title="image-20220318112715504">
 
-<h4 id="2-通话发起到接听的时序图"><a href="#2-通话发起到接听的时序图" class="headerlink" title="2. 通话发起到接听的时序图"></a>2. 通话发起到接听的时序图</h4><img src="/2022/03/16/coding-guidelines/design2.png" class="" title="image-20220318112918395">
+<h4 id="2-通话发起到接听的时序图"><a href="#2-通话发起到接听的时序图" class="headerlink" title="2. 通话发起到接听的时序图"></a>2. 通话发起到接听的时序图</h4><img src="/2022/03/18/coding-guidelines/design2.png" class="" title="image-20220318112918395">
 
 <h4 id="3-与协作方外部系统交互的-活动图"><a href="#3-与协作方外部系统交互的-活动图" class="headerlink" title="3. 与协作方外部系统交互的 活动图"></a>3. 与协作方外部系统交互的 活动图</h4><img src="./design3.png" alt="image-20220318113905621" style="zoom:55%;" />
 
-<h4 id="4-UAT测试环境各个服务间的部署图"><a href="#4-UAT测试环境各个服务间的部署图" class="headerlink" title="4. UAT测试环境各个服务间的部署图"></a>4. UAT测试环境各个服务间的部署图</h4><img src="/2022/03/16/coding-guidelines/design4.png" class="" title="image-20220318113430160">
+<h4 id="4-UAT测试环境各个服务间的部署图"><a href="#4-UAT测试环境各个服务间的部署图" class="headerlink" title="4. UAT测试环境各个服务间的部署图"></a>4. UAT测试环境各个服务间的部署图</h4><img src="/2022/03/18/coding-guidelines/design4.png" class="" title="image-20220318113430160">
 
-<h2 id="阿里巴巴-Java开发手册解读"><a href="#阿里巴巴-Java开发手册解读" class="headerlink" title="阿里巴巴 Java开发手册解读"></a>阿里巴巴 Java开发手册解读</h2><p>下载链接: <a target="_blank" rel="noopener" href="https://github.com/alibaba/p3c">https://github.com/alibaba/p3c</a></p>
+<h2 id="阿里巴巴-Java开发手册解读"><a href="#阿里巴巴-Java开发手册解读" class="headerlink" title="阿里巴巴 Java开发手册解读"></a>阿里巴巴 Java开发手册解读</h2><p>手册下载链接: <a target="_blank" rel="noopener" href="https://github.com/alibaba/p3c">https://github.com/alibaba/p3c</a></p>
+<h3 id="难点解读"><a href="#难点解读" class="headerlink" title="难点解读:"></a>难点解读:</h3><ul>
+<li>示例代码位置: </li>
+</ul>
 
       
     </div>
@@ -551,7 +554,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95"><span class="nav-number">1.</span> <span class="nav-text">目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Git%E5%88%86%E6%94%AF%E7%AE%A1%E7%90%86%E8%A7%84%E8%8C%83"><span class="nav-number">2.</span> <span class="nav-text">Git分支管理规范</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E5%88%86%E6%94%AF%E8%AF%B4%E6%98%8E"><span class="nav-number">2.1.</span> <span class="nav-text">常用分支说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#master%E5%88%86%E6%94%AF"><span class="nav-number">2.1.1.</span> <span class="nav-text">master分支:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#develop%E5%88%86%E6%94%AF"><span class="nav-number">2.1.2.</span> <span class="nav-text">develop分支:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#feature-amp-fix%E5%88%86%E6%94%AF"><span class="nav-number">2.1.3.</span> <span class="nav-text">feature &amp; fix分支:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#release%E5%88%86%E6%94%AF"><span class="nav-number">2.1.4.</span> <span class="nav-text">release分支:</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E6%B5%81%E7%A8%8B%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.2.</span> <span class="nav-text">操作流程示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E8%A7%84%E8%8C%83"><span class="nav-number">3.</span> <span class="nav-text">设计规范</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">3.1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%BF%E9%87%8C%E8%AE%BE%E8%AE%A1%E8%A7%84%E7%BA%A6"><span class="nav-number">3.2.</span> <span class="nav-text">阿里设计规约</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E7%BB%84UML%E5%9B%BE%E7%A4%BA%E4%BE%8B"><span class="nav-number">3.3.</span> <span class="nav-text">本组UML图示例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E4%B8%80%E9%80%9A%E7%94%B5%E8%AF%9D%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E7%9A%84%E7%8A%B6%E6%80%81%E5%9B%BE"><span class="nav-number">3.3.1.</span> <span class="nav-text">1. 一通电话生命周期的状态图:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E9%80%9A%E8%AF%9D%E5%8F%91%E8%B5%B7%E5%88%B0%E6%8E%A5%E5%90%AC%E7%9A%84%E6%97%B6%E5%BA%8F%E5%9B%BE"><span class="nav-number">3.3.2.</span> <span class="nav-text">2. 通话发起到接听的时序图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E4%B8%8E%E5%8D%8F%E4%BD%9C%E6%96%B9%E5%A4%96%E9%83%A8%E7%B3%BB%E7%BB%9F%E4%BA%A4%E4%BA%92%E7%9A%84-%E6%B4%BB%E5%8A%A8%E5%9B%BE"><span class="nav-number">3.3.3.</span> <span class="nav-text">3. 与协作方外部系统交互的 活动图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-UAT%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83%E5%90%84%E4%B8%AA%E6%9C%8D%E5%8A%A1%E9%97%B4%E7%9A%84%E9%83%A8%E7%BD%B2%E5%9B%BE"><span class="nav-number">3.3.4.</span> <span class="nav-text">4. UAT测试环境各个服务间的部署图</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%98%BF%E9%87%8C%E5%B7%B4%E5%B7%B4-Java%E5%BC%80%E5%8F%91%E6%89%8B%E5%86%8C%E8%A7%A3%E8%AF%BB"><span class="nav-number">4.</span> <span class="nav-text">阿里巴巴 Java开发手册解读</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95"><span class="nav-number">1.</span> <span class="nav-text">目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Git%E5%88%86%E6%94%AF%E7%AE%A1%E7%90%86%E8%A7%84%E8%8C%83"><span class="nav-number">2.</span> <span class="nav-text">Git分支管理规范</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E5%88%86%E6%94%AF%E8%AF%B4%E6%98%8E"><span class="nav-number">2.1.</span> <span class="nav-text">常用分支说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#master%E5%88%86%E6%94%AF"><span class="nav-number">2.1.1.</span> <span class="nav-text">master分支:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#develop%E5%88%86%E6%94%AF"><span class="nav-number">2.1.2.</span> <span class="nav-text">develop分支:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#feature-amp-fix%E5%88%86%E6%94%AF"><span class="nav-number">2.1.3.</span> <span class="nav-text">feature &amp; fix分支:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#release%E5%88%86%E6%94%AF"><span class="nav-number">2.1.4.</span> <span class="nav-text">release分支:</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E6%B5%81%E7%A8%8B%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.2.</span> <span class="nav-text">操作流程示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E8%A7%84%E8%8C%83"><span class="nav-number">3.</span> <span class="nav-text">设计规范</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">3.1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%BF%E9%87%8C%E8%AE%BE%E8%AE%A1%E8%A7%84%E7%BA%A6"><span class="nav-number">3.2.</span> <span class="nav-text">阿里设计规约</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E7%BB%84UML%E5%9B%BE%E7%A4%BA%E4%BE%8B"><span class="nav-number">3.3.</span> <span class="nav-text">本组UML图示例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E4%B8%80%E9%80%9A%E7%94%B5%E8%AF%9D%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E7%9A%84%E7%8A%B6%E6%80%81%E5%9B%BE"><span class="nav-number">3.3.1.</span> <span class="nav-text">1. 一通电话生命周期的状态图:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E9%80%9A%E8%AF%9D%E5%8F%91%E8%B5%B7%E5%88%B0%E6%8E%A5%E5%90%AC%E7%9A%84%E6%97%B6%E5%BA%8F%E5%9B%BE"><span class="nav-number">3.3.2.</span> <span class="nav-text">2. 通话发起到接听的时序图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E4%B8%8E%E5%8D%8F%E4%BD%9C%E6%96%B9%E5%A4%96%E9%83%A8%E7%B3%BB%E7%BB%9F%E4%BA%A4%E4%BA%92%E7%9A%84-%E6%B4%BB%E5%8A%A8%E5%9B%BE"><span class="nav-number">3.3.3.</span> <span class="nav-text">3. 与协作方外部系统交互的 活动图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-UAT%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83%E5%90%84%E4%B8%AA%E6%9C%8D%E5%8A%A1%E9%97%B4%E7%9A%84%E9%83%A8%E7%BD%B2%E5%9B%BE"><span class="nav-number">3.3.4.</span> <span class="nav-text">4. UAT测试环境各个服务间的部署图</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%98%BF%E9%87%8C%E5%B7%B4%E5%B7%B4-Java%E5%BC%80%E5%8F%91%E6%89%8B%E5%86%8C%E8%A7%A3%E8%AF%BB"><span class="nav-number">4.</span> <span class="nav-text">阿里巴巴 Java开发手册解读</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9A%BE%E7%82%B9%E8%A7%A3%E8%AF%BB"><span class="nav-number">4.1.</span> <span class="nav-text">难点解读:</span></a></li></ol></li></ol></div>
             
 
           </div>
