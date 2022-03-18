@@ -122,5 +122,191 @@ title: 编程规范
 
 ### 难点解读:
 
-+ 示例代码位置: 
+示例代码源码:  https://github.com/RobbieXie/p3c_guideline_code_demo
+
+##### 命名规约-9: 【强制】POJO 类中的任何布尔类型的变量，都不要加 is 前缀，否则部分框架解析会引起序列化错误。
+
+```java
+public class NameGuideline9 {
+
+    public static void main(String[] args) throws JsonProcessingException {
+        Record record = Record.builder()
+                .isDeleted(true)
+                .build();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        Gson gson = new Gson();
+
+        // jackson默认输出 {"deleted":true}
+        System.out.println(objectMapper.writeValueAsString(record));
+        // gson默认输出 {"isDeleted":true}
+        System.out.println(gson.toJson(record));
+    }
+
+    @Data
+    @Builder
+    public static class Record {
+        private boolean isDeleted;
+    }
+}
+```
+
+##### 集合规约-2: 【强制】判断所有集合内部的元素是否为空，使用 isEmpty() 方法，而不是 size() == 0 的方式。
+
+```java
+// 在某些集合中，前者的时间复杂度为 O(1)，而且可读性更好。
+// 比如 ConcurrentLinkedQueue
+
+    // size()方法
+    public int size() {
+        int count = 0;
+        for (Node<E> p = first(); p != null; p = succ(p))
+            if (p.item != null)
+                // Collection.size() spec says to max out
+                if (++count == Integer.MAX_VALUE)
+                    break;
+        return count;
+    }
+    
+    // isEmpty()方法
+    public boolean isEmpty() {
+        return peekFirst() == null;
+    }
+```
+
+##### 集合规约-3&4: 【强制】在使用 java.util.stream.Collectors 类的 toMap() 方法转为 Map 集合时，一定要使用参数类型 为 BinaryOperator，参数名为 mergeFunction 的方法，否则当出现相同 key 时会抛出 IllegalStateException 异常。【强制】在使用 java.util.stream.Collectors 类的 toMap() 方法转为 Map 集合时，一定要注意当 value 为 null 时会抛 NPE 异常。
+
+```java
+public class CollectionGuideline4 {
+
+    public static void main(String[] args) {
+        ArrayList<User> users = Lists.newArrayList(
+                new User("xietiandi", "male"),
+                new User("xietiandi", "male"),
+                new User("xtd", null)
+        );
+
+        // 因为有重复key value， 会抛出IllegalStateException异常
+        users.stream().collect(Collectors.toMap(User::getName, User::getSex));
+
+        // 因为有value为null的元素， 会抛出NPE
+        users.stream().collect(Collectors.toMap(User::getName, User::getSex, (v1, v2) -> v2));
+
+        // 有重复元素且允许value为null时的正确写法
+        users.stream().collect(HashMap::new,
+                (hashMap, user) -> hashMap.put(user.getName(), user.getSex()),
+                HashMap::putAll).forEach((key, value) -> System.out.println(key + ":" + value));
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static class User {
+        private String name;
+        private String sex;
+    }
+}
+```
+
+##### 集合规约-12:  【强制】泛型通配符<? extends T>来接收返回的数据，此写法的泛型集合不能使用 add 方 而<? super T>不能使用 get 方法，两者在接口调用赋值的场景中容易出错。
+
+```java
+public class CollectionGuideline12 {
+
+    public static void main(String[] args) {
+        List<Animal> animals = new ArrayList<>();
+        List<Dog> dogs = new ArrayList<>();
+        List<Husky> huskies = Lists.newArrayList(new Husky(), new Husky());
+        List<Corgi> corgis = Lists.newArrayList(new Corgi(), new Corgi());
+
+        // addAll 可以将Dog任意子类加入到List<Dog>中
+        addAll(dogs, huskies);
+        addAll(dogs, corgis);
+
+        // addAll 也可以将Dog任意子类加入到List<Animal>中
+        addAll(animals, huskies);
+        addAll(animals, corgis);
+    }
+
+    /**
+     * 将 任何Dog或其子类的List对象 添加到 任何 Dog或其父类的List中
+     *
+     * @param dest
+     * @param src
+     */
+    public static void addAll(List<? super Dog> dest, List<? extends Dog> src) {
+        dest.addAll(src);
+    }
+
+    private static class Animal {}
+    private static class Dog extends Animal {}
+    private static class Husky extends Dog {}
+    private static class Corgi extends Dog {}
+
+}
+```
+
+##### 并发规约-6: 【强制】必须回收自定义的 ThreadLocal 变量，尤其在线程池场景下，线程经常会被复用，如果不清理 自定义的 ThreadLocal 变量，可能会影响后续业务逻辑和造成内存泄露等问题。尽量在代理中使用 try-finally 块进行回收。
+
++ 注意设置java启动参数 -Xms15m -Xmx15m 限制堆大小15M;
+
+```java
+public class ConcurrentGuideline6 {
+
+    /**
+     * supplier supplies 5MB buffer
+     */
+    private static final ThreadLocal<ByteBuffer> BYTE_BUFFER_THREAD_LOCAL =
+            ThreadLocal.withInitial(() -> ByteBuffer.allocate(5 * 1024 * 1024));
+
+    private static final ThreadLocal<ByteBuffer> BYTE_BUFFER_THREAD_LOCAL_2 =
+            ThreadLocal.withInitial(() -> ByteBuffer.allocate(5 * 1024 * 1024));
+
+    private static final ThreadLocal<ByteBuffer> BYTE_BUFFER_THREAD_LOCAL_3 =
+            ThreadLocal.withInitial(() -> ByteBuffer.allocate(5 * 1024 * 1024));
+
+    public static void main(String[] args) {
+        System.out.println("main-thread...");
+
+        /**
+         * Runnable1逻辑：
+         * 1. 获取5mb的ThreadLocal1对象值
+         * 2. 打印日志
+         * 3. 线程强制waiting 2秒
+         * 4. 手动清除ThreadLocal
+         */
+        Runnable runnable = () -> {
+            BYTE_BUFFER_THREAD_LOCAL.get();
+            System.out.println(Thread.currentThread().getName() + "get ByteBuffer 1");
+            LockSupport.parkNanos(Duration.ofSeconds(2).toNanos());
+            BYTE_BUFFER_THREAD_LOCAL.remove();
+        };
+
+        // Runnable2 获取其他ThreadLocal对象：ThreadLocal2
+        Runnable runnable2 = () -> {
+            BYTE_BUFFER_THREAD_LOCAL_2.get();
+            System.out.println(Thread.currentThread().getName() + "get ByteBuffer 2");
+            LockSupport.parkNanos(Duration.ofSeconds(2).toNanos());
+            BYTE_BUFFER_THREAD_LOCAL_2.remove();
+        };
+
+        // Runnable3 获取其他ThreadLocal对象：ThreadLocal3
+        Runnable runnable3 = () -> {
+            BYTE_BUFFER_THREAD_LOCAL_3.get();
+            System.out.println(Thread.currentThread().getName() + "get ByteBuffer 3");
+            LockSupport.parkNanos(Duration.ofSeconds(2).toNanos());
+            BYTE_BUFFER_THREAD_LOCAL_3.remove();
+        };
+
+        // 单线程线程池
+        ThreadPoolExecutor threadPoolExecutor =
+                new ThreadPoolExecutor(1, 1, 0L, TimeUnit.SECONDS,
+                        new LinkedBlockingDeque<>(10), Executors.defaultThreadFactory());
+
+        // 在限制heapSize是15M的情况下，如不remove ThreadLocal, 会OOM
+        threadPoolExecutor.execute(runnable);
+        threadPoolExecutor.execute(runnable2);
+        threadPoolExecutor.execute(runnable3);
+    }
+}
+```
 
