@@ -7,7 +7,7 @@ title: 网络基础知识
 ## 分层模型 OSI model
 
 **Open Systems Interconnection model** (**OSI model**) 开放系统互联模型是一个概念性的参考模型, 不指定任何协议的具体实现. 核心思想在于不同网络层级间的解耦、接口独立, 任何一层协议可以升级替换后不影响整个网络功能, 在网络通信协议设计时起到一个指导作用.  
-<img src="network-base/osi7.png" alt="image-osi" style="zoom:50%;" />
+<img src="osi7.png" alt="image-osi" style="zoom:50%;" />
 
 ### Definitions:
 
