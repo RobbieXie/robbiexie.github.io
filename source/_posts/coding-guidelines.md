@@ -64,7 +64,7 @@ title: 编程规范
 
 + 从该commit切出release分支 , 发布到UAT环境 并交给测试和业务同事验证功能, 如符合预期 则使用该版本应用包上线. 上线完成后合并至 master 分支.
 
-<img src="/Users/talentxiet/Library/Application Support/typora-user-images/image-20220316160610988.png" alt="image-20220316160610988" style="zoom:50%;" />
+<img src="./git-miss.png" alt="image-20220316160610988" style="zoom:50%;" />
 
 + 若该release分支测试时出了问题, 则直接在该分支修复问题. 知道符合预期后 发布生产, 并将新改动合并至master和develop分支.
 
@@ -118,7 +118,9 @@ title: 编程规范
 
 ## 阿里巴巴 Java开发手册解读
 
-下载链接: https://github.com/alibaba/p3c
+手册下载链接: https://github.com/alibaba/p3c
 
+### 难点解读:
 
++ 示例代码位置: 
 
