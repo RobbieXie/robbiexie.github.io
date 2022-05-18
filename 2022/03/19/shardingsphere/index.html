@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="sharding, jdbc," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="JDBC API及其上层生态JDBC API是JDK提供的, Java程序访问数据库的统一接口. 我们实际开发中使用的数据库连接池、ORM&#x2F;持久层框架、分库分表等也无一例外是基于JDBC API的上层拓展与实现. 本文我们从底层出发, 逐个了解上层的封装细节. JDBC API基本介绍Oracle官方定义:The Java Database Connectivity (JDBC) API prov">
+<meta property="og:type" content="article">
+<meta property="og:title" content="shardingsphere">
+<meta property="og:url" content="https://robbiexie.github.io/2022/03/19/shardingsphere/index.html">
+<meta property="og:site_name" content="RobbieXie&#39;s Blog">
+<meta property="og:description" content="JDBC API及其上层生态JDBC API是JDK提供的, Java程序访问数据库的统一接口. 我们实际开发中使用的数据库连接池、ORM&#x2F;持久层框架、分库分表等也无一例外是基于JDBC API的上层拓展与实现. 本文我们从底层出发, 逐个了解上层的封装细节. JDBC API基本介绍Oracle官方定义:The Java Database Connectivity (JDBC) API prov">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/19/shardingsphere/jdbc-level.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/19/shardingsphere/jdbc-package.png">
+<meta property="og:image" content="https://robbiexie.github.io/Users/talentxiet/Library/Application%20Support/typora-user-images/image-20220401190952211.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/19/shardingsphere/datasource-impl.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/19/shardingsphere/datasource-pool.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/19/shardingsphere/mybatis-arch.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/19/shardingsphere/mybatis-execute.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/19/shardingsphere/mybatis-package.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/19/shardingsphere/sharding-jdbc.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/19/shardingsphere/sharding-core-package.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/19/shardingsphere/mybatis-sharding-jdbc.png">
+<meta property="og:image" content="https://robbiexie.github.io/2022/03/19/shardingsphere/sharding-jdbc-sequence.png">
+<meta property="article:published_time" content="2022-03-19T13:35:45.000Z">
+<meta property="article:modified_time" content="2022-05-18T13:56:12.772Z">
+<meta property="article:author" content="谢天帝">
+<meta property="article:tag" content="sharding, jdbc">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://robbiexie.github.io/2022/03/19/shardingsphere/jdbc-level.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://robbiexie.github.io/2022/03/19/shardingsphere/"/>
+
+
+
+
+
+  <title>shardingsphere | RobbieXie's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">RobbieXie's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://robbiexie.github.io/2022/03/19/shardingsphere/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="RobbieXie's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">shardingsphere</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2022-03-19T21:35:45+08:00">
+                2022-03-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="JDBC-API及其上层生态"><a href="#JDBC-API及其上层生态" class="headerlink" title="JDBC API及其上层生态"></a>JDBC API及其上层生态</h1><p>JDBC API是JDK提供的, Java程序访问数据库的统一接口. 我们实际开发中使用的数据库连接池、ORM/持久层框架、分库分表等也无一例外是基于JDBC API的上层拓展与实现. 本文我们从底层出发, 逐个了解上层的封装细节.</p>
+<h2 id="JDBC-API基本介绍"><a href="#JDBC-API基本介绍" class="headerlink" title="JDBC API基本介绍"></a>JDBC API基本介绍</h2><h3 id="Oracle官方定义"><a href="#Oracle官方定义" class="headerlink" title="Oracle官方定义:"></a>Oracle官方定义:</h3><p><em>The Java Database Connectivity (JDBC) API provides universal data access from the Java programming language. Using the JDBC API, you can access virtually any data source, from relational databases to spreadsheets and flat files.</em> </p>
+<p>简单来说, JDBC是JDK提供的Java程序访问数据库资源的上层统一接口.  当Java程序要访问数据库时，Java代码可直接调用 JDBC接口，而JDBC接口底层通过Java SPI机制找到数据库厂商的JDBC驱动来实现对数据库的读写操作。</p>
+<img src="./jdbc-level.png" alt="image-20220331212519941" style="zoom:47%;" />
+
+<h3 id="JDBC-API基础使用方法"><a href="#JDBC-API基础使用方法" class="headerlink" title="JDBC API基础使用方法:"></a>JDBC API基础使用方法:</h3><p>JDBC API包含两个包: java.sql 和 javax.sql , 其核心类和基本用法如下:</p>
+<img src="./jdbc-package.png" alt="jdbc-package" style="zoom:43%;" />
+
+<ul>
+<li>通过DriverManager.getConnection()获取数据库驱动连接</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">DriverManager</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// List of registered JDBC drivers</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> CopyOnWriteArrayList&lt;DriverInfo&gt; registeredDrivers = <span class="keyword">new</span> <span class="title class_">CopyOnWriteArrayList</span>&lt;&gt;();</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="comment">// 通过java SPI 注册声明的Driver实现到 registeredDrivers</span></span><br><span class="line">        loadInitialDrivers();</span><br><span class="line">        println(<span class="string">&quot;JDBC DriverManager initialized&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// ... 略</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">registerDriver</span><span class="params">(java.sql.Driver driver,</span></span><br><span class="line"><span class="params">            DriverAction da)</span></span><br><span class="line">        <span class="keyword">throws</span> SQLException &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* Register the driver if it has not already been added to our list */</span></span><br><span class="line">        <span class="keyword">if</span>(driver != <span class="literal">null</span>) &#123;</span><br><span class="line">            registeredDrivers.addIfAbsent(<span class="keyword">new</span> <span class="title class_">DriverInfo</span>(driver, da));</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// This is for compatibility with the original DriverManager</span></span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">NullPointerException</span>();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        println(<span class="string">&quot;registerDriver: &quot;</span> + driver);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// ... 略</span></span><br><span class="line">    <span class="comment">// 获取连接时最终遍历registeredDriver并connect</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Connection <span class="title function_">getConnection</span><span class="params">(String url,</span></span><br><span class="line"><span class="params">        java.util.Properties info)</span> <span class="keyword">throws</span> SQLException &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> (getConnection(url, info, Reflection.getCallerClass()));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>查询数据</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">JDBC_URL</span> <span class="operator">=</span> <span class="string">&quot;jdbc:mysql://localhost:3306/test&quot;</span>;</span><br><span class="line"><span class="type">String</span> <span class="variable">JDBC_USER</span> <span class="operator">=</span> <span class="string">&quot;root&quot;</span>;</span><br><span class="line"><span class="type">String</span> <span class="variable">JDBC_PASSWORD</span> <span class="operator">=</span> <span class="string">&quot;password&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span> (<span class="type">Connection</span> <span class="variable">conn</span> <span class="operator">=</span> DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD)) &#123;</span><br><span class="line">    <span class="keyword">try</span> (<span class="type">PreparedStatement</span> <span class="variable">ps</span> <span class="operator">=</span> conn.prepareStatement(<span class="string">&quot;SELECT id, grade, name, gender FROM students WHERE gender=? AND grade=?&quot;</span>)) &#123;</span><br><span class="line">        ps.setObject(<span class="number">1</span>, <span class="string">&quot;M&quot;</span>); <span class="comment">// 注意：索引从1开始</span></span><br><span class="line">        ps.setObject(<span class="number">2</span>, <span class="number">3</span>);</span><br><span class="line">        <span class="keyword">try</span> (<span class="type">ResultSet</span> <span class="variable">rs</span> <span class="operator">=</span> ps.executeQuery()) &#123;</span><br><span class="line">            <span class="keyword">while</span> (rs.next()) &#123;</span><br><span class="line">                <span class="type">long</span> <span class="variable">id</span> <span class="operator">=</span> rs.getLong(<span class="string">&quot;id&quot;</span>);</span><br><span class="line">                <span class="type">long</span> <span class="variable">grade</span> <span class="operator">=</span> rs.getLong(<span class="string">&quot;grade&quot;</span>);</span><br><span class="line">                <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> rs.getString(<span class="string">&quot;name&quot;</span>);</span><br><span class="line">                <span class="type">String</span> <span class="variable">gender</span> <span class="operator">=</span> rs.getString(<span class="string">&quot;gender&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>插入、更新、删除数据</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// insert and get genrated key</span></span><br><span class="line"><span class="keyword">try</span> (<span class="type">Connection</span> <span class="variable">conn</span> <span class="operator">=</span> DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD)) &#123;</span><br><span class="line">    <span class="keyword">try</span> (<span class="type">PreparedStatement</span> <span class="variable">ps</span> <span class="operator">=</span> conn.prepareStatement(</span><br><span class="line">            <span class="string">&quot;INSERT INTO students (grade, name, gender) VALUES (?,?,?)&quot;</span>,</span><br><span class="line">            Statement.RETURN_GENERATED_KEYS)) &#123;</span><br><span class="line">        ps.setObject(<span class="number">1</span>, <span class="number">1</span>); <span class="comment">// grade</span></span><br><span class="line">        ps.setObject(<span class="number">2</span>, <span class="string">&quot;Bob&quot;</span>); <span class="comment">// name</span></span><br><span class="line">        ps.setObject(<span class="number">3</span>, <span class="string">&quot;M&quot;</span>); <span class="comment">// gender</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> ps.executeUpdate(); <span class="comment">// 1</span></span><br><span class="line">        <span class="keyword">try</span> (<span class="type">ResultSet</span> <span class="variable">rs</span> <span class="operator">=</span> ps.getGeneratedKeys()) &#123;</span><br><span class="line">            <span class="keyword">if</span> (rs.next()) &#123;</span><br><span class="line">                <span class="type">long</span> <span class="variable">id</span> <span class="operator">=</span> rs.getLong(<span class="number">1</span>); <span class="comment">// 注意：索引从1开始</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// update</span></span><br><span class="line"><span class="keyword">try</span> (<span class="type">Connection</span> <span class="variable">conn</span> <span class="operator">=</span> DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD)) &#123;</span><br><span class="line">    <span class="keyword">try</span> (<span class="type">PreparedStatement</span> <span class="variable">ps</span> <span class="operator">=</span> conn.prepareStatement(<span class="string">&quot;UPDATE students SET name=? WHERE id=?&quot;</span>)) &#123;</span><br><span class="line">        ps.setObject(<span class="number">1</span>, <span class="string">&quot;Bob&quot;</span>); <span class="comment">// 注意：索引从1开始</span></span><br><span class="line">        ps.setObject(<span class="number">2</span>, <span class="number">999</span>);</span><br><span class="line">        <span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> ps.executeUpdate(); <span class="comment">// 返回更新的行数</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// delete</span></span><br><span class="line"><span class="keyword">try</span> (<span class="type">Connection</span> <span class="variable">conn</span> <span class="operator">=</span> DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD)) &#123;</span><br><span class="line">    <span class="keyword">try</span> (<span class="type">PreparedStatement</span> <span class="variable">ps</span> <span class="operator">=</span> conn.prepareStatement(<span class="string">&quot;DELETE FROM students WHERE id=?&quot;</span>)) &#123;</span><br><span class="line">        ps.setObject(<span class="number">1</span>, <span class="number">999</span>); <span class="comment">// 注意：索引从1开始</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> ps.executeUpdate(); <span class="comment">// 删除的行数</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>事务操作,  默认每条sql语句都会在一个独立的事务中并被自动提交,  控制事务就是取消自动提交、执行多条sql并手动提交</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Connection</span> <span class="variable">conn</span> <span class="operator">=</span> openConnection();</span><br><span class="line"><span class="comment">// 设定隔离级别为READ COMMITTED, 不设置使用mysql默认隔离级别</span></span><br><span class="line">conn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="comment">// 关闭自动提交:</span></span><br><span class="line">    conn.setAutoCommit(<span class="literal">false</span>);</span><br><span class="line">    <span class="comment">// 执行多条SQL语句:</span></span><br><span class="line">    insert(); </span><br><span class="line">    update();</span><br><span class="line">    delete();</span><br><span class="line">    <span class="comment">// 提交事务:</span></span><br><span class="line">    conn.commit();</span><br><span class="line">&#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">    <span class="comment">// 回滚事务:</span></span><br><span class="line">    conn.rollback();</span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">    conn.setAutoCommit(<span class="literal">true</span>);</span><br><span class="line">    conn.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="DataSource接口"><a href="#DataSource接口" class="headerlink" title="DataSource接口:"></a>DataSource接口:</h3><p>官方javadoc:  </p>
+<p> <strong>A factory for connections</strong> to the physical data source that this DataSource object represents. An <strong>alternative to the DriverManager</strong> facility, a DataSource object is <strong>the preferred means of getting a connection</strong>. (总结)</p>
+<img src="/Users/talentxiet/Library/Application Support/typora-user-images/image-20220401190952211.png" alt="image-20220401190952211" style="zoom:50%;" />
+
+<p>DataSource一般有三种实现:</p>
+<ol>
+<li>Basic 实现:  内部就是调用DriverManager中的数据库驱动获取连接. 例如Spring JDBC的DriverManagerDataSource.</li>
+<li>Connection pooling实现: 用池化技术复用连接. 例如Hikari的HikariDataSource.</li>
+<li>Distributed 实现: 可以产出能执行分布式SQL的Connection. 例如Sharding JDBC的ShardingDataSource.</li>
+</ol>
+<img src="./datasource-impl.png" alt="image-20220401191629549" style="zoom:50%;" />
+
+<h2 id="生态一-数据库连接池"><a href="#生态一-数据库连接池" class="headerlink" title="生态一: 数据库连接池"></a>生态一: 数据库连接池</h2><p>每次读写访问都通过数据库驱动新建和销毁tcp连接的开销是昂贵的,  我们通常用连接池来初始化并复用已经创建好的连接. 连接池的开源实现非常多, 比如hikari, druid, tomcat-jdbc pool等. 不同实现模型和细节各有不同, 其优势也各有不同, 我们这里不一一展开了, 大家可以自行查看其benchmark相关文章.</p>
+<img src="./datasource-pool.png" alt="image-20220401193526994" style="zoom: 45%;" />
+
+<p>连接池的大体模型都如上图所示: 数据库驱动连接的借用、归还、以及创建和销毁. 我们这里列出一些较通用的连接池配置点, 在实际使用过程中大家注意根据实际需要正确的配置即可. 下边示例是hikari的参数配置项.</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">connectionTimeout: 请求连接的超时时间</span><br><span class="line">idleTimeout: 空闲连接回收时间</span><br><span class="line">maxLifetime: 连接最大存活时间</span><br><span class="line">connectionTestQuery: borrow到连接后测试连接有效的query语句</span><br><span class="line">minimumIdle: 连接池中最小的闲置连接数, 总数不超过maximux的前提下hikari尽可能保证此参数数量</span><br><span class="line">maximumPoolSize: 连接池中最大的连接数</span><br></pre></td></tr></table></figure>
+
+<p>此类数据库连接池通常也会产出详细的监控指标信息, 收集这类指标可以很好的辅助我们排障和了解线上资源使用情况, 常见指标(hikari为例)如下: </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">idleConnections: 当前闲置连接数</span><br><span class="line">activeConnections: 当前活跃连接数</span><br><span class="line">totalConnections: activeConnection + idleConnections</span><br><span class="line">pendingThreads: 当前等待连接的线程数</span><br><span class="line">maxConnections: 历史最大连接数</span><br><span class="line">minConnections: 历史最小连接数</span><br><span class="line">usageTime: 本次连接使用时间</span><br><span class="line">acquireTime: 本次连接请求时间</span><br></pre></td></tr></table></figure>
+
+<h2 id="生态二-spring-jdbc"><a href="#生态二-spring-jdbc" class="headerlink" title="生态二: spring-jdbc"></a>生态二: spring-jdbc</h2><p>spring-jdbc是Spring framework中的模块之一, 提供了Spring对原生JDBC API的实现和上层封装,其主要包含以下四个包:</p>
+<ul>
+<li><strong>core</strong>: 提供Spring封装后的核心功能接口及实现, 如 <em>JdbcOperations</em>, <em>JdbcTemplate</em>, <em>NamedParameterJdbcTemplate</em></li>
+<li><strong>datasource</strong>: 提供DataSource的实现及上层功能封装, 如 <em>DriverManagerDataSource</em>和 <em>DataSourceTransactionManager</em></li>
+<li><strong>object</strong>: 提供面向对象的SQL Query和Result返回结果封装</li>
+<li><strong>support</strong>: 提供上面包的一些通用support类</li>
+</ul>
+<p>spring-jdbc (包括其依赖的spring-tx) 可以帮我们简化一些开发流程: </p>
+<ul>
+<li>原始: 获取数据库连接、处理事务autocommit、声明SQL、预编译并执行、映射ResultSet结果集到期望对象、处理异常和事务、释放连接资源等一系列操作.</li>
+<li> spring-jdbc:  配置DataSource和JdbcTemplate, 声明SQL和结果映射方式、调用JdbcTemplate接口执行, 获取对象结果.</li>
+</ul>
+<p>简单使用示例如下:</p>
+<ul>
+<li>配置DataSource和JdbcTemplate</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@PropertySource(&quot;jdbc.properties&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AppConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Value(&quot;$&#123;jdbc.url&#125;&quot;)</span></span><br><span class="line">    String jdbcUrl;</span><br><span class="line">    <span class="meta">@Value(&quot;$&#123;jdbc.username&#125;&quot;)</span></span><br><span class="line">    String jdbcUsername;</span><br><span class="line">    <span class="meta">@Value(&quot;$&#123;jdbc.password&#125;&quot;)</span></span><br><span class="line">    String jdbcPassword;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    DataSource <span class="title function_">createDataSource</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">HikariConfig</span> <span class="variable">config</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HikariConfig</span>();</span><br><span class="line">        config.setJdbcUrl(jdbcUrl);</span><br><span class="line">        config.setUsername(jdbcUsername);</span><br><span class="line">        config.setPassword(jdbcPassword);</span><br><span class="line">        config.addDataSourceProperty(<span class="string">&quot;autoCommit&quot;</span>, <span class="string">&quot;true&quot;</span>);</span><br><span class="line">        config.addDataSourceProperty(<span class="string">&quot;connectionTimeout&quot;</span>, <span class="string">&quot;5&quot;</span>);</span><br><span class="line">        config.addDataSourceProperty(<span class="string">&quot;idleTimeout&quot;</span>, <span class="string">&quot;60&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">HikariDataSource</span>(config);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    JdbcTemplate <span class="title function_">createJdbcTemplate</span><span class="params">(<span class="meta">@Autowired</span> DataSource dataSource)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">JdbcTemplate</span>(dataSource);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>使用JdbcTemplate最为Dao层返回结果</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> List&lt;User&gt; <span class="title function_">getUsers</span><span class="params">(<span class="type">int</span> pageIndex, <span class="type">int</span> pageSize)</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">limit</span> <span class="operator">=</span> pageSize;</span><br><span class="line">    <span class="type">int</span> <span class="variable">offset</span> <span class="operator">=</span> limit * (pageIndex - <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">return</span> jdbcTemplate.query(<span class="string">&quot;SELECT * FROM users LIMIT ? OFFSET ?&quot;</span>, <span class="keyword">new</span> <span class="title class_">Object</span>[] &#123; limit, offset &#125;,</span><br><span class="line">            <span class="keyword">new</span> <span class="title class_">BeanPropertyRowMapper</span>&lt;&gt;(User.class));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>JdbcTemplate只是jdbc api的一些简单封装, 在实际开发中, 大多还是使用MyBatis、Hibernate此类的ORM框架, 更好的对底层操作进行封闭.  </p>
+<p>但spring-jdbc依赖的spring-tx包中对事务进行了抽象, 给我们提供了简单的 @Transactional 注解来为代码逻辑进行AOP事务增强.  其中增强逻辑的实现全部依靠 DataSourceTransactionManager 类来完成, 包括当前事务上下文判断、从DataSource中获取Connection、设置隔离级别并关闭auto commit、设置线程共享的ThreadLocal存储dataSource获取到的Connection、以及最终的Connection commit or rollback.</p>
+<p>理解事务本质 以及 Spring对事务的封装:</p>
+<p>从原生JDBC API我们知道, 一个事务和一个Connection是强绑定的. 默认一个Connection的autoCommit会设置成true, 也就是每条执行的SQL默认都在一个事务里,并在执行完成后自动提交了. 若我们想让代码实现多个SQL在一个事务里执行, 本质上就是让这些SQL在一个autoCommit设置为false的Connection中执行, 并最终手动commit. DataSourceTransactionManager本质上也就是做了这个工作, 在@Transactional 注解的方法开始前, 获取到新的Connection, 设置隔离级别与autoCommit, 执行若干代码逻辑, 最终提交或回滚.  当遇到传播级别为REQUIRES_NEW的增强方法或想另起一个新事务执行一些SQL时, 就需再从DataSource获取一个新的Connection来进行.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> Object <span class="title function_">invokeWithinTransaction</span><span class="params">(Method method, Class&lt;?&gt; targetClass, <span class="keyword">final</span> InvocationCallback invocation)</span></span><br><span class="line">			<span class="keyword">throws</span> Throwable &#123;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">final</span> <span class="type">TransactionAttribute</span> <span class="variable">txAttr</span> <span class="operator">=</span> getTransactionAttributeSource().getTransactionAttribute(method, targetClass);</span><br><span class="line">    <span class="comment">// 获取DataSourceTransactionManager</span></span><br><span class="line">		<span class="keyword">final</span> <span class="type">PlatformTransactionManager</span> <span class="variable">tm</span> <span class="operator">=</span> determineTransactionManager(txAttr);</span><br><span class="line">		<span class="keyword">final</span> <span class="type">String</span> <span class="variable">joinpointIdentification</span> <span class="operator">=</span> methodIdentification(method, targetClass, txAttr);</span><br><span class="line">		</span><br><span class="line">      <span class="comment">// TransactionManager判断是否需要创建新事务, 即获取Connection</span></span><br><span class="line">			<span class="type">TransactionInfo</span> <span class="variable">txInfo</span> <span class="operator">=</span> createTransactionIfNecessary(tm, txAttr, joinpointIdentification);</span><br><span class="line">			<span class="type">Object</span> <span class="variable">retVal</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				<span class="comment">// AOP 增强的原始方法</span></span><br><span class="line">				retVal = invocation.proceedWithInvocation();</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">catch</span> (Throwable ex) &#123;</span><br><span class="line">				<span class="comment">// 遇到异常选择性回滚事务</span></span><br><span class="line">				completeTransactionAfterThrowing(txInfo, ex);</span><br><span class="line">				<span class="keyword">throw</span> ex;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">finally</span> &#123;</span><br><span class="line">				cleanupTransactionInfo(txInfo);</span><br><span class="line">			&#125;</span><br><span class="line">      <span class="comment">// 正常执行提交事务</span></span><br><span class="line">			commitTransactionAfterReturning(txInfo);</span><br><span class="line">			<span class="keyword">return</span> retVal;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="生态三-ORM-持久层框架-MyBatis"><a href="#生态三-ORM-持久层框架-MyBatis" class="headerlink" title="生态三: ORM/持久层框架-MyBatis"></a>生态三: ORM/持久层框架-MyBatis</h2><blockquote>
+<p>本节我们挑重点讲解, 详细源码分析可参考此文章:  <a target="_blank" rel="noopener" href="https://learn.lianglianglee.com/%E4%B8%93%E6%A0%8F/%E6%B7%B1%E5%85%A5%E5%89%96%E6%9E%90%20MyBatis%20%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E5%AE%8C/03%20%20MyBatis%20%E6%BA%90%E7%A0%81%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E5%8F%8A%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84%E8%A7%A3%E6%9E%90.md">mybatis design concept</a></p>
+</blockquote>
+<p>MyBatis官方Introduction: </p>
+<p>MyBatis 是一款优秀的持久层框架，它支持自定义 SQL、存储过程以及高级映射。<strong>MyBatis 免除了几乎所有的 JDBC 代码以及设置参数和获取结果集的工作</strong>。MyBatis 可以通过简单的 XML 或注解来配置和映射原始类型、Map、集合等接口和 Java POJO为数据库中的记录。</p>
+<p>MyBatis 分为三层架构，分别是<strong>基础支撑层、核心处理层</strong>和<strong>接口层</strong>，如下图所示：</p>
+<img src="./mybatis-arch.png" alt="image-20220405125449569" style="zoom:30%;" />
+
+<ul>
+<li>基础支撑层是整个 MyBatis 框架的地基，为整个 MyBatis 框架提供了底层基础的功能，其中每个模块都提供了一个内聚的、单一的能力;    </li>
+<li>核心处理层是 MyBatis 核心实现所在，其中涉及 MyBatis 的初始化以及执行一条 SQL 语句的全流程。</li>
+<li>接口层是 MyBatis 暴露给调用的接口集合，这些接口都是使用 MyBatis 时最常用的一些接口，例如，SqlSession 接口、SqlSessionFactory 接口等。</li>
+</ul>
+<p>MyBatis执行过程以及对JDBC API的封装:</p>
+<img src="./mybatis-execute.png" alt="image-20220405132244101" style="zoom:35%;" />
+
+<p>MyBatis与Spring的集成:</p>
+<p>我们在Spring框架内使用mybatis的时候, 要引入mybatis和mybatis-spring两个依赖, 前者是mybatis的所有核心逻辑的代码, 而后者负责整合spring框架能力, 其又引入了spring-jdbc以及spring-tx. </p>
+<img src="./mybatis-package.png" alt="image-20220419141734725" style="zoom:50%;" />
+
+<p>一个 Transaction 的例子, 多个Dao在一个事务中执行的过程:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Transactional</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">createOrder</span><span class="params">(Long userId, Long productId, Integer count)</span> &#123;</span><br><span class="line">    <span class="comment">// 1. 创建订单</span></span><br><span class="line">    orderDao.insertOrder(Order.builder()</span><br><span class="line">            .userId(userId)</span><br><span class="line">            .productId(productId)</span><br><span class="line">            .count(count)</span><br><span class="line">            .build());</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 2. 减少商品库存</span></span><br><span class="line">    productDao.minusCount(productId, count);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 3. 增加用户积分</span></span><br><span class="line">    userDao.addPoint(userId, count);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>MyBatis框架的SQL执行是交给Executor负责的, Executor每次新建的时候会传入一个Transaction对象, 在与Spring整合的过程中, 会将MyBatis Configuration中的 TransactionFactory指定为 SpringManagedTransactionFactory, 其最终目标呢, 就是创建出 SpringManagedTransaction给 Executor使用. </p>
+<p>SpringManagedTransaction有什么特别的呢? </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// SpringManagedTransaction 中的获取连接</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">openConnection</span><span class="params">()</span> <span class="keyword">throws</span> SQLException &#123;</span><br><span class="line">    <span class="comment">// 通过Spring-jdbc暴露的 DataSourceUtils 获取Connection, 该Util会从当前线程上下文中判断是否存在事务, 并获取由之前Spring事务切面存入的 Connection</span></span><br><span class="line">    <span class="built_in">this</span>.connection = DataSourceUtils.getConnection(<span class="built_in">this</span>.dataSource);</span><br><span class="line">    <span class="built_in">this</span>.autoCommit = <span class="built_in">this</span>.connection.getAutoCommit();</span><br><span class="line">    <span class="built_in">this</span>.isConnectionTransactional = DataSourceUtils.isConnectionTransactional(<span class="built_in">this</span>.connection, <span class="built_in">this</span>.dataSource);</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// DataSourceUtils.getConnection方法内部逻辑</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Connection <span class="title function_">getConnection</span><span class="params">(DataSource dataSource)</span> &#123;</span><br><span class="line">    <span class="comment">// 从全局的TreadLocal中获取当前线程是否已有事务Connection</span></span><br><span class="line">    <span class="type">ConnectionHolder</span> <span class="variable">conHolder</span> <span class="operator">=</span> TransactionSynchronizationManager.getResource(dataSource);</span><br><span class="line">		<span class="comment">// 有的话直接使用同一个Connection</span></span><br><span class="line">    <span class="keyword">if</span> (conHolder != <span class="literal">null</span> &amp;&amp; (conHolder.hasConnection() || conHolder.isSynchronizedWithTransaction())) &#123;</span><br><span class="line">			conHolder.requested();</span><br><span class="line">			<span class="keyword">if</span> (!conHolder.hasConnection()) &#123;</span><br><span class="line">				logger.debug(<span class="string">&quot;Fetching resumed JDBC Connection from DataSource&quot;</span>);</span><br><span class="line">				conHolder.setConnection(fetchConnection(dataSource));</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">return</span> conHolder.getConnection();</span><br><span class="line">		&#125;</span><br><span class="line">    <span class="comment">// 线程上下文中没有事务连接, 新获取Connection执行后续SQL</span></span><br><span class="line">    <span class="type">Connection</span> <span class="variable">con</span> <span class="operator">=</span> fetchConnection(dataSource);</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    <span class="keyword">return</span> con;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="生态四-分库分表"><a href="#生态四-分库分表" class="headerlink" title="生态四: 分库分表"></a>生态四: 分库分表</h2><h3 id="Sharding-JDBC-ShardingSphere-JDBC"><a href="#Sharding-JDBC-ShardingSphere-JDBC" class="headerlink" title="Sharding-JDBC (ShardingSphere-JDBC)"></a>Sharding-JDBC (ShardingSphere-JDBC)</h3><p>官方介绍:</p>
+<p>定位为轻量级 Java 框架，在 Java 的 JDBC 层提供的额外服务。 它使用客户端直连数据库，以 jar 包形式提供服务，无需额外部署和依赖，可理解为增强版的 JDBC 驱动，完全兼容 JDBC 和各种 ORM 框架。</p>
+<ul>
+<li>适用于任何基于 JDBC 的 ORM 框架，如：JPA, Hibernate, Mybatis, Spring JDBC Template 或直接使用 JDBC；</li>
+<li>支持任何第三方的数据库连接池，如：DBCP, C3P0, BoneCP, HikariCP 等；</li>
+<li>支持任意实现 JDBC 规范的数据库，目前支持 MySQL，PostgreSQL，Oracle，SQLServer 以及任何可使用 JDBC 访问的数据库。</li>
+</ul>
+<img src="/2022/03/19/shardingsphere/sharding-jdbc.png" class="" title="image-20220319220206599">
+
+<p>故名思义, Sharding-JDBC, 叫这个名字, 那它一定是基于JDBC API进行的能力拓展. 我们可以看下其core包下结构便一目了然了:</p>
+<img src="./sharding-core-package.png" alt="image-20220418225313643" style="zoom:50%;" />
+
+<p>为什么Sharding-JDBC能支持所有的ORM框架呢?  也正因为它直接在JDBC层进行的封装, 以 MyBatis 和 Sharding JDBC为例: </p>
+<img src="./mybatis-sharding-jdbc.png" alt="image-20220419152546734" style="zoom:50%;" />
+
+<p>Sharding-JDBC 为 JDBC DataSource接口实现了 ShardingDataSource, 其内部管理了多个数据源, 而上层使用时对多数据源完全无感. 在PrepareStatement阶段, Sharding-JDBC会根据要执行的SQL以及配置的分库分表Rule,  解析并路由出若干条执行单元, 并分别从对应连接池中获取连接, 并执行改写后的SQL. </p>
+<img src="./sharding-jdbc-sequence.png" alt="image-20220419153403836" style="zoom: 25%;" />
+
+<p>分库分表配置示例:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">  ~ Licensed to the Apache Software Foundation (ASF) under one or more</span></span><br><span class="line"><span class="comment">  ~ contributor license agreements.  See the NOTICE file distributed with</span></span><br><span class="line"><span class="comment">  ~ this work for additional information regarding copyright ownership.</span></span><br><span class="line"><span class="comment">  ~ The ASF licenses this file to You under the Apache License, Version 2.0</span></span><br><span class="line"><span class="comment">  ~ (the &quot;License&quot;); you may not use this file except in compliance with</span></span><br><span class="line"><span class="comment">  ~ the License.  You may obtain a copy of the License at</span></span><br><span class="line"><span class="comment">  ~</span></span><br><span class="line"><span class="comment">  ~     http://www.apache.org/licenses/LICENSE-2.0</span></span><br><span class="line"><span class="comment">  ~</span></span><br><span class="line"><span class="comment">  ~ Unless required by applicable law or agreed to in writing, software</span></span><br><span class="line"><span class="comment">  ~ distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span></span><br><span class="line"><span class="comment">  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span></span><br><span class="line"><span class="comment">  ~ See the License for the specific language governing permissions and</span></span><br><span class="line"><span class="comment">  ~ limitations under the License.</span></span><br><span class="line"><span class="comment">  --&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:context</span>=<span class="string">&quot;http://www.springframework.org/schema/context&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:tx</span>=<span class="string">&quot;http://www.springframework.org/schema/tx&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:sharding</span>=<span class="string">&quot;http://shardingsphere.apache.org/schema/shardingsphere/sharding&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:bean</span>=<span class="string">&quot;http://www.springframework.org/schema/util&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/beans</span></span></span><br><span class="line"><span class="string"><span class="tag">                        http://www.springframework.org/schema/beans/spring-beans.xsd </span></span></span><br><span class="line"><span class="string"><span class="tag">                        http://www.springframework.org/schema/tx </span></span></span><br><span class="line"><span class="string"><span class="tag">                        http://www.springframework.org/schema/tx/spring-tx.xsd</span></span></span><br><span class="line"><span class="string"><span class="tag">                        http://www.springframework.org/schema/context </span></span></span><br><span class="line"><span class="string"><span class="tag">                        http://www.springframework.org/schema/context/spring-context.xsd</span></span></span><br><span class="line"><span class="string"><span class="tag">                        http://shardingsphere.apache.org/schema/shardingsphere/sharding</span></span></span><br><span class="line"><span class="string"><span class="tag">                        http://shardingsphere.apache.org/schema/shardingsphere/sharding/sharding.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">context:component-scan</span> <span class="attr">base-package</span>=<span class="string">&quot;org.apache.shardingsphere.example.core.mybatis&quot;</span> /&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;demo_ds_0&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.zaxxer.hikari.HikariDataSource&quot;</span> <span class="attr">destroy-method</span>=<span class="string">&quot;close&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;driverClassName&quot;</span> <span class="attr">value</span>=<span class="string">&quot;com.mysql.jdbc.Driver&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;jdbcUrl&quot;</span> <span class="attr">value</span>=<span class="string">&quot;jdbc:mysql://localhost:3306/demo_ds_0?useSSL=false<span class="symbol">&amp;amp;</span>useUnicode=true<span class="symbol">&amp;amp;</span>characterEncoding=UTF-8&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;username&quot;</span> <span class="attr">value</span>=<span class="string">&quot;root&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;password&quot;</span> <span class="attr">value</span>=<span class="string">&quot;&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;demo_ds_1&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.zaxxer.hikari.HikariDataSource&quot;</span> <span class="attr">destroy-method</span>=<span class="string">&quot;close&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;driverClassName&quot;</span> <span class="attr">value</span>=<span class="string">&quot;com.mysql.jdbc.Driver&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;jdbcUrl&quot;</span> <span class="attr">value</span>=<span class="string">&quot;jdbc:mysql://localhost:3306/demo_ds_1?useSSL=false<span class="symbol">&amp;amp;</span>useUnicode=true<span class="symbol">&amp;amp;</span>characterEncoding=UTF-8&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;username&quot;</span> <span class="attr">value</span>=<span class="string">&quot;root&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;password&quot;</span> <span class="attr">value</span>=<span class="string">&quot;&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="tag">&lt;<span class="name">sharding:inline-strategy</span> <span class="attr">id</span>=<span class="string">&quot;databaseStrategy&quot;</span> <span class="attr">sharding-column</span>=<span class="string">&quot;user_id&quot;</span> <span class="attr">algorithm-expression</span>=<span class="string">&quot;demo_ds_$&#123;user_id % 2&#125;&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">sharding:inline-strategy</span> <span class="attr">id</span>=<span class="string">&quot;orderTableStrategy&quot;</span> <span class="attr">sharding-column</span>=<span class="string">&quot;order_id&quot;</span> <span class="attr">algorithm-expression</span>=<span class="string">&quot;t_order_$&#123;order_id % 2&#125;&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">sharding:inline-strategy</span> <span class="attr">id</span>=<span class="string">&quot;orderItemTableStrategy&quot;</span> <span class="attr">sharding-column</span>=<span class="string">&quot;order_id&quot;</span> <span class="attr">algorithm-expression</span>=<span class="string">&quot;t_order_item_$&#123;order_id % 2&#125;&quot;</span> /&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="tag">&lt;<span class="name">bean:properties</span> <span class="attr">id</span>=<span class="string">&quot;properties&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">&quot;worker.id&quot;</span>&gt;</span>123<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean:properties</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="tag">&lt;<span class="name">sharding:key-generator</span> <span class="attr">id</span>=<span class="string">&quot;orderKeyGenerator&quot;</span> <span class="attr">type</span>=<span class="string">&quot;SNOWFLAKE&quot;</span> <span class="attr">column</span>=<span class="string">&quot;order_id&quot;</span> <span class="attr">props-ref</span>=<span class="string">&quot;properties&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">sharding:key-generator</span> <span class="attr">id</span>=<span class="string">&quot;itemKeyGenerator&quot;</span> <span class="attr">type</span>=<span class="string">&quot;SNOWFLAKE&quot;</span> <span class="attr">column</span>=<span class="string">&quot;order_item_id&quot;</span> <span class="attr">props-ref</span>=<span class="string">&quot;properties&quot;</span> /&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="tag">&lt;<span class="name">sharding:data-source</span> <span class="attr">id</span>=<span class="string">&quot;shardingDataSource&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">sharding:sharding-rule</span> <span class="attr">data-source-names</span>=<span class="string">&quot;demo_ds_0, demo_ds_1&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">sharding:table-rules</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">sharding:table-rule</span> <span class="attr">logic-table</span>=<span class="string">&quot;t_order&quot;</span> <span class="attr">actual-data-nodes</span>=<span class="string">&quot;demo_ds_$&#123;0..1&#125;.t_order_$&#123;0..1&#125;&quot;</span> <span class="attr">database-strategy-ref</span>=<span class="string">&quot;databaseStrategy&quot;</span> <span class="attr">table-strategy-ref</span>=<span class="string">&quot;orderTableStrategy&quot;</span> <span class="attr">key-generator-ref</span>=<span class="string">&quot;orderKeyGenerator&quot;</span> /&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">sharding:table-rule</span> <span class="attr">logic-table</span>=<span class="string">&quot;t_order_item&quot;</span> <span class="attr">actual-data-nodes</span>=<span class="string">&quot;demo_ds_$&#123;0..1&#125;.t_order_item_$&#123;0..1&#125;&quot;</span> <span class="attr">database-strategy-ref</span>=<span class="string">&quot;databaseStrategy&quot;</span> <span class="attr">table-strategy-ref</span>=<span class="string">&quot;orderItemTableStrategy&quot;</span> <span class="attr">key-generator-ref</span>=<span class="string">&quot;itemKeyGenerator&quot;</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">sharding:table-rules</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">sharding:binding-table-rules</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">sharding:binding-table-rule</span> <span class="attr">logic-tables</span>=<span class="string">&quot;t_order,t_order_item&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">sharding:binding-table-rules</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">sharding:broadcast-table-rules</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">sharding:broadcast-table-rule</span> <span class="attr">table</span>=<span class="string">&quot;t_address&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">sharding:broadcast-table-rules</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">sharding:sharding-rule</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">sharding:props</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">&quot;sql.show&quot;</span>&gt;</span>false<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">sharding:props</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">sharding:data-source</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;transactionManager&quot;</span> <span class="attr">class</span>=<span class="string">&quot;org.springframework.jdbc.datasource.DataSourceTransactionManager&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;dataSource&quot;</span> <span class="attr">ref</span>=<span class="string">&quot;shardingDataSource&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">tx:annotation-driven</span> /&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;sqlSessionFactory&quot;</span> <span class="attr">class</span>=<span class="string">&quot;org.mybatis.spring.SqlSessionFactoryBean&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;dataSource&quot;</span> <span class="attr">ref</span>=<span class="string">&quot;shardingDataSource&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;mapperLocations&quot;</span> <span class="attr">value</span>=<span class="string">&quot;classpath*:META-INF/mappers/*.xml&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">&quot;org.mybatis.spring.mapper.MapperScannerConfigurer&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;basePackage&quot;</span> <span class="attr">value</span>=<span class="string">&quot;org.apache.shardingsphere.example.core.mybatis.repository&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;sqlSessionFactoryBeanName&quot;</span> <span class="attr">value</span>=<span class="string">&quot;sqlSessionFactory&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>思考: 跨数据源事务一致性问题?</p>
+<h2 id="生态五-分布式事务…-待完成"><a href="#生态五-分布式事务…-待完成" class="headerlink" title="生态五:  分布式事务… 待完成"></a>生态五:  分布式事务… 待完成</h2>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/sharding-jdbc/" rel="tag"># sharding, jdbc</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/03/18/coding-guidelines/" rel="next" title="编程规范">
+                <i class="fa fa-chevron-left"></i> 编程规范
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/05/18/socketio/" rel="prev" title="socketio">
+                socketio <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#JDBC-API%E5%8F%8A%E5%85%B6%E4%B8%8A%E5%B1%82%E7%94%9F%E6%80%81"><span class="nav-number">1.</span> <span class="nav-text">JDBC API及其上层生态</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#JDBC-API%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.1.</span> <span class="nav-text">JDBC API基本介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Oracle%E5%AE%98%E6%96%B9%E5%AE%9A%E4%B9%89"><span class="nav-number">1.1.1.</span> <span class="nav-text">Oracle官方定义:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JDBC-API%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95"><span class="nav-number">1.1.2.</span> <span class="nav-text">JDBC API基础使用方法:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DataSource%E6%8E%A5%E5%8F%A3"><span class="nav-number">1.1.3.</span> <span class="nav-text">DataSource接口:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%9F%E6%80%81%E4%B8%80-%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0"><span class="nav-number">1.2.</span> <span class="nav-text">生态一: 数据库连接池</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%9F%E6%80%81%E4%BA%8C-spring-jdbc"><span class="nav-number">1.3.</span> <span class="nav-text">生态二: spring-jdbc</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%9F%E6%80%81%E4%B8%89-ORM-%E6%8C%81%E4%B9%85%E5%B1%82%E6%A1%86%E6%9E%B6-MyBatis"><span class="nav-number">1.4.</span> <span class="nav-text">生态三: ORM&#x2F;持久层框架-MyBatis</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%9F%E6%80%81%E5%9B%9B-%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8"><span class="nav-number">1.5.</span> <span class="nav-text">生态四: 分库分表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Sharding-JDBC-ShardingSphere-JDBC"><span class="nav-number">1.5.1.</span> <span class="nav-text">Sharding-JDBC (ShardingSphere-JDBC)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%9F%E6%80%81%E4%BA%94-%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E2%80%A6-%E5%BE%85%E5%AE%8C%E6%88%90"><span class="nav-number">1.6.</span> <span class="nav-text">生态五:  分布式事务… 待完成</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">谢天帝</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
