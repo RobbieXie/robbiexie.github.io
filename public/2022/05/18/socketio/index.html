@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="socketio," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="EngineIO ProtocolEngine.IO是Socket.IO更底层的实现基础，要想完整理解Socket.IO必须对Engine.IO协议也有深刻认知。 Engine.IO session详解 传输层与Engine.IO URL建立一个连接。  服务端返回一个JSON格式的 1OPEN  握手数据，包括如下内容：  sid session id（字符串） upgrades 可能有传输升级">
+<meta property="og:type" content="article">
+<meta property="og:title" content="socketio">
+<meta property="og:url" content="https://robbiexie.github.io/2022/05/18/socketio/index.html">
+<meta property="og:site_name" content="RobbieXie&#39;s Blog">
+<meta property="og:description" content="EngineIO ProtocolEngine.IO是Socket.IO更底层的实现基础，要想完整理解Socket.IO必须对Engine.IO协议也有深刻认知。 Engine.IO session详解 传输层与Engine.IO URL建立一个连接。  服务端返回一个JSON格式的 1OPEN  握手数据，包括如下内容：  sid session id（字符串） upgrades 可能有传输升级">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-05-18T13:52:41.000Z">
+<meta property="article:modified_time" content="2022-05-18T15:09:17.073Z">
+<meta property="article:author" content="谢天帝">
+<meta property="article:tag" content="socketio">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://robbiexie.github.io/2022/05/18/socketio/"/>
+
+
+
+
+
+  <title>socketio | RobbieXie's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">RobbieXie's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://robbiexie.github.io/2022/05/18/socketio/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="RobbieXie's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">socketio</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2022-05-18T21:52:41+08:00">
+                2022-05-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="EngineIO-Protocol"><a href="#EngineIO-Protocol" class="headerlink" title="EngineIO Protocol"></a>EngineIO Protocol</h2><p><a target="_blank" rel="noopener" href="https://github.com/socketio/engine.io-protocol"><strong>Engine.IO</strong></a>是<a target="_blank" rel="noopener" href="https://github.com/socketio/socket.io"><strong>Socket.IO</strong></a>更底层的实现基础，要想完整理解Socket.IO必须对Engine.IO协议也有深刻认知。</p>
+<h3 id="Engine-IO-session详解"><a href="#Engine-IO-session详解" class="headerlink" title="Engine.IO session详解"></a>Engine.IO session详解</h3><ol>
+<li><p>传输层与Engine.IO URL建立一个连接。</p>
+</li>
+<li><p>服务端返回一个JSON格式的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">OPEN</span><br></pre></td></tr></table></figure>
+
+<p>握手数据，包括如下内容：</p>
+<ul>
+<li><code>sid</code> session id（字符串）</li>
+<li><code>upgrades</code> 可能有传输升级（字符串数组）</li>
+<li><code>pingTimeout</code> 服务端需配置ping超时时间，用于客户端判断服务端是否不可达。（数字）</li>
+<li><code>pingInterval</code> 服务端需配置ping间隔时间，用于客户端判断服务端是否不可达。（数字）</li>
+</ul>
+</li>
+<li><p>客户端必须通过<code>pong</code>周期性回复服务端的<code>ping</code>。</p>
+</li>
+<li><p>客户端和服务端可以在任意时刻交换<code>message</code>。</p>
+</li>
+<li><p>Polling方式的传输允许发送<code>close</code>来关闭socket，因为预期中会一直处于”opening”和”closing”的状态。</p>
+</li>
+</ol>
+<h4 id="会话示例"><a href="#会话示例" class="headerlink" title="会话示例"></a>会话示例</h4><ul>
+<li>Request n°1 (open packet)</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GET /engine.io/?EIO=4&amp;transport=polling&amp;t=N8hyd6w</span><br><span class="line">&lt; HTTP/1.1 200 OK</span><br><span class="line">&lt; Content-Type: text/plain; charset=UTF-8</span><br><span class="line">0&#123;&quot;sid&quot;:&quot;lv_VI97HAXpY6yYWAAAC&quot;,&quot;upgrades&quot;:[&quot;websocket&quot;],&quot;pingInterval&quot;:25000,&quot;pingTimeout&quot;:5000&#125;</span><br></pre></td></tr></table></figure>
+
+<p>细节：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0           =&gt; &quot;open&quot; packet type</span><br><span class="line">&#123;&quot;sid&quot;:...  =&gt; the handshake data</span><br></pre></td></tr></table></figure>
+
+<p>注意：参数<code>t</code>用于防止浏览器缓存该请求。</p>
+<ul>
+<li>Request n°2 (message in)</li>
+</ul>
+<p>服务端会执行<code>socket.send(&#39;hey&#39;)</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GET /engine.io/?EIO=4&amp;transport=polling&amp;t=N8hyd7H&amp;sid=lv_VI97HAXpY6yYWAAAC</span><br><span class="line">&lt; HTTP/1.1 200 OK</span><br><span class="line">&lt; Content-Type: text/plain; charset=UTF-8</span><br><span class="line">4hey</span><br></pre></td></tr></table></figure>
+
+<p>细节：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">4           =&gt; &quot;message&quot; packet type</span><br><span class="line">hey         =&gt; the actual message</span><br></pre></td></tr></table></figure>
+
+<p>注意：<code>sid</code>参数包括握手数据中的sid。</p>
+<ul>
+<li>Request n°3 (message out)</li>
+</ul>
+<p>客户端将会执行<code>socket.send(&#39;hello&#39;); socket.send(&#39;world&#39;);</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">POST /engine.io/?EIO=4&amp;transport=polling&amp;t=N8hzxke&amp;sid=lv_VI97HAXpY6yYWAAAC</span><br><span class="line">&gt; Content-Type: text/plain; charset=UTF-8</span><br><span class="line">4hello\x1e4world</span><br><span class="line">&lt; HTTP/1.1 200 OK</span><br><span class="line">&lt; Content-Type: text/plain; charset=UTF-8</span><br><span class="line">ok</span><br></pre></td></tr></table></figure>
+
+<p>细节：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">4           =&gt; &quot;message&quot; packet type</span><br><span class="line">hello       =&gt; the 1st message</span><br><span class="line">\x1e        =&gt; separator</span><br><span class="line">4           =&gt; &quot;message&quot; message type</span><br><span class="line">world       =&gt; the 2nd message</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Request n°4 (WebSocket upgrade)</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GET /engine.io/?EIO=4&amp;transport=websocket&amp;sid=lv_VI97HAXpY6yYWAAAC</span><br><span class="line">&lt; HTTP/1.1 101 Switching Protocols</span><br></pre></td></tr></table></figure>
+
+<p>Websocket数据帧：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt; 2probe    =&gt; probe request</span><br><span class="line">&gt; 3probe    =&gt; probe response</span><br><span class="line">&lt; 5         =&gt; &quot;upgrade&quot; packet type</span><br><span class="line">&gt; 4hello    =&gt; message (not concatenated)</span><br><span class="line">&gt; 4world</span><br><span class="line">&gt; 2         =&gt; &quot;ping&quot; packet type</span><br><span class="line">&lt; 3         =&gt; &quot;pong&quot; packet type</span><br><span class="line">&gt; 1         =&gt; &quot;close&quot; packet type</span><br></pre></td></tr></table></figure>
+
+<h4 id="Websocket-会话示例"><a href="#Websocket-会话示例" class="headerlink" title="Websocket 会话示例"></a>Websocket 会话示例</h4><p>这种情况下，客户端只启用Websocket（没有HTTP polling）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GET /engine.io/?EIO=4&amp;transport=websocket</span><br><span class="line">&lt; HTTP/1.1 101 Switching Protocols</span><br></pre></td></tr></table></figure>
+
+<p>Websocket数据帧：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt; 0&#123;&quot;sid&quot;:&quot;lv_VI97HAXpY6yYWAAAC&quot;,&quot;pingInterval&quot;:25000,&quot;pingTimeout&quot;:5000&#125; =&gt; handshake</span><br><span class="line">&lt; 4hey</span><br><span class="line">&gt; 4hello    =&gt; message (not concatenated)</span><br><span class="line">&gt; 4world</span><br><span class="line">&lt; 2         =&gt; &quot;ping&quot; packet type</span><br><span class="line">&gt; 3         =&gt; &quot;pong&quot; packet type</span><br><span class="line">&gt; 1         =&gt; &quot;close&quot; packet type</span><br></pre></td></tr></table></figure>
+
+<h3 id="路由"><a href="#路由" class="headerlink" title="路由"></a>路由</h3><p>Engine.IO路由组成如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/engine.io/[?&lt;query string&gt;]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>engine.io</code>的路径名仅可以被基于engine.io上层协议的框架修改</li>
+<li>查询字符串是可选的，有6个保留字：<ul>
+<li><code>transport</code>：表明传输方式。默认支持<code>polling</code>，<code>websocket</code>。</li>
+<li><code>j</code>：如果传输方式是<code>polling</code>且返回值必须是JSONP类型，则<code>j</code>必须设置为JSONP返回值的index。</li>
+<li><code>sid</code>：如果客户端要加session id，必须放在查询字符串上。</li>
+<li><code>EIO</code>：Engine.IO的版本号。</li>
+<li><code>t</code>：时间戳的hash值，用来防止浏览器缓存。</li>
+</ul>
+</li>
+</ul>
+<p>FAQ：<code>/engine.io</code>这部分路由是否可修改？ 可以，服务端在不同的子路径下拦截请求。</p>
+<p>FAQ：是什么因素决定一个选型出现在编码了的查询字符串上？换句话说，为什么<code>transport</code>字段不在路由上面呢？ 约定是子路径仅用于让Engine.IO的服务端消除是否要处理这个请求的歧义。这当然只有Engine.IO的前缀（<code>/engine.io</code>）。</p>
+<h3 id="编码方式"><a href="#编码方式" class="headerlink" title="编码方式"></a>编码方式</h3><p>有两种不同的编码方式：</p>
+<ul>
+<li>packet</li>
+<li>Payload</li>
+</ul>
+<h4 id="Packet"><a href="#Packet" class="headerlink" title="Packet"></a>Packet</h4><p>一个编码的packet可以是UTF-8的字符串，也可以是二进制数据。字符串形式的编码packet如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;packet type id&gt;[&lt;data&gt;]</span><br></pre></td></tr></table></figure>
+
+<p>例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">4hello</span><br></pre></td></tr></table></figure>
+
+<p>对于二进制数据来说，无需包含packet类型，因为只有<code>message</code>可以包括二进制数据。</p>
+<h5 id="0-open"><a href="#0-open" class="headerlink" title="0 open"></a>0 open</h5><p>当新的传输通道打开会从服务端发送。</p>
+<h5 id="1-close"><a href="#1-close" class="headerlink" title="1 close"></a>1 close</h5><p>请求关闭此传输通道但不会立刻关闭连接。</p>
+<h5 id="2-ping"><a href="#2-ping" class="headerlink" title="2 ping"></a>2 ping</h5><p>由服务端发送，客户端回复pong包。</p>
+<p>样例：</p>
+<ul>
+<li>server sends: <code>2</code></li>
+<li>client sends: <code>3</code></li>
+</ul>
+<h5 id="3-pong"><a href="#3-pong" class="headerlink" title="3 pong"></a>3 pong</h5><p>客户端发送用于回复ping包。</p>
+<h5 id="4-message"><a href="#4-message" class="headerlink" title="4 message"></a>4 message</h5><p>消息体，客户端和服务端可以通过它们的回调接口传输数据</p>
+<p>样例一：</p>
+<ul>
+<li>服务端发送：<code>4HelloWorld</code></li>
+<li>客户端接收并触发回调：<code>socket.on(&#39;message&#39;, function (data) &#123; console.log(data); &#125;);</code></li>
+</ul>
+<p>样例二：</p>
+<ul>
+<li>客户端发送：<code>4HelloWorld</code></li>
+<li>服务端接收并触发回调：<code>socket.on(&#39;message&#39;, function (data) &#123; console.log(data); &#125;);</code></li>
+</ul>
+<h5 id="5-upgrade"><a href="#5-upgrade" class="headerlink" title="5 upgrade"></a>5 upgrade</h5><p>在engine.io切换传输方式之前，它需要测试服务端和客户端之间是否允许这种传输方式。如果测试成功，客户端将会发送一个upgrade包给服务端并要求它刷新旧传输方式的缓存并切换到新的传输方式。</p>
+<h5 id="6-noop"><a href="#6-noop" class="headerlink" title="6 noop"></a>6 noop</h5><p>noop包主要用于当一个websocket连接将要建立时候强制一轮poll循环。</p>
+<p>样例：</p>
+<ol>
+<li>客户端通过新的传输方式连接</li>
+<li>客户端发送：<code>2probe</code></li>
+<li>服务端接收并发送：<code>3probe</code></li>
+<li>客户端接收并发送：<code>5</code></li>
+<li>服务端刷新环境，关闭旧传输方式并切换至新的传输方式</li>
+</ol>
+<h4 id="Payload"><a href="#Payload" class="headerlink" title="Payload"></a>Payload</h4><p>Payload是一系列packet捆绑在一起。当仅支持字符串且XHR2不支持的情况下，payload编码格式如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;packet1&gt;\x1e&lt;packet2&gt;\x1e&lt;packet3&gt;</span><br></pre></td></tr></table></figure>
+
+<p>packet通过(‘\x1e’)分割，更多信息请参考： <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/C0_and_C1_control_codes#Field_separators">https://en.wikipedia.org/wiki/C0_and_C1_control_codes#Field_separators</a></p>
+<p>当payload支持二进制数据时，它会通过发送base64编码的字符串。为了便于解码，二进制格式的packet前会插入字符<code>b</code>。任意数量的字符串和base64编码的字符串可以被聚合发送。下面是base64编码消息的样例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;packet1&gt;\x1eb&lt;packet2 data in b64&gt;[...]</span><br></pre></td></tr></table></figure>
+
+<p>payload用于不支持帧方式的传输，比如polling协议。</p>
+<ul>
+<li>无二进制数据样例：</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">[</span></span><br><span class="line">  <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;message&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;data&quot;</span><span class="punctuation">:</span> <span class="string">&quot;hello&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;message&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;data&quot;</span><span class="punctuation">:</span> <span class="string">&quot;€&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
+
+<p>被编码为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">4hello\x1e4€</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>二进制数据样例：</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">[</span></span><br><span class="line">  <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;message&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;data&quot;</span><span class="punctuation">:</span> <span class="string">&quot;€&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;message&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;data&quot;</span><span class="punctuation">:</span> buffer &lt;<span class="number">01</span> <span class="number">02</span> <span class="number">03</span> <span class="number">04</span>&gt;</span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
+
+<p>被编码为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">4€\x1ebAQIDBA==</span><br><span class="line"></span><br><span class="line">with</span><br><span class="line"></span><br><span class="line">4           =&gt; &quot;message&quot; packet type</span><br><span class="line">€</span><br><span class="line">\x1e        =&gt; record separator</span><br><span class="line">b           =&gt; indicates a base64 packet</span><br><span class="line">AQIDBA==    =&gt; buffer content encoded in base64</span><br></pre></td></tr></table></figure>
+
+<h3 id="传输方式"><a href="#传输方式" class="headerlink" title="传输方式"></a>传输方式</h3><p>Engine.IO的服务端必须支持三种传输方式：</p>
+<ul>
+<li>websocket</li>
+<li>server-sent events (SSE)</li>
+<li>Polling<ul>
+<li>Jsonp</li>
+<li>Xhr</li>
+</ul>
+</li>
+</ul>
+<h4 id="Polling"><a href="#Polling" class="headerlink" title="Polling"></a>Polling</h4><p>polling方式包括客户端循环GET请求访问服务端获取数据，以及客户端POST请求传输数据给服务端。</p>
+<h5 id="XHR"><a href="#XHR" class="headerlink" title="XHR"></a>XHR</h5><p>服务端必须支持跨域。</p>
+<h5 id="JSONP"><a href="#JSONP" class="headerlink" title="JSONP"></a>JSONP</h5><p>服务端的实现必须回复合法的JavaScript。URL上面必须包含查询字符串参数<code>j</code>，并必须被应用在返回体中。<code>j</code>是一个整数：</p>
+<p>JSONP格式：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">`___eio[` &lt;j&gt; `](&quot;` &lt;encoded payload&gt; `&quot;);`</span><br></pre></td></tr></table></figure>
+
+<p>为了确保payload被正确处理，它的转义也必须符合合法的JavaScript。使用一个JSON编码器是一个发送编码payload的良好转义方法。</p>
+<p>如下是服务端返回的JSONP样例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">___eio[4](&quot;packet data&quot;);</span><br></pre></td></tr></table></figure>
+
+<p><strong>上传数据</strong></p>
+<p>客户端通过一个隐藏的<code>iframe</code>上传数据。到服务端的数据在URI中的编码格式如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">d=&lt;escaped packet payload&gt;</span><br></pre></td></tr></table></figure>
+
+<p>此外根据标准转义规范，为了防止浏览器对<code>\n</code>处理的不一致，<code>\n</code>会在POST中会转义为<code>\\n</code>。</p>
+<h4 id="Server-sent-events"><a href="#Server-sent-events" class="headerlink" title="Server-sent events"></a>Server-sent events</h4><p>客户端使用一个EventSource的对象用于接收数据，使用一个XMLHttpRequest的对象用于发送数据。</p>
+<h4 id="Websocket"><a href="#Websocket" class="headerlink" title="Websocket"></a>Websocket</h4><p>payload编码不适用websocket，因为协议本身已经具有一个轻量级的数据帧机制。</p>
+<p>发送payload类型的消息，只需要单独编码并连续调用<code>send()</code>发送。</p>
+<h3 id="传输升级"><a href="#传输升级" class="headerlink" title="传输升级"></a>传输升级</h3><p>一个连接总是要从polling方式开始（XHR或者JSONP）。websocket要通过发送一个探测开始。加入服务端对探测有返回结果，则会发送一个upgrade包。</p>
+<p>为了确保没有消息丢失，upgrade包在当前存在的传输通道缓存中仅会被发送一次，且此时传输被认为是处于暂停状态。</p>
+<p>当服务端接收到upgrade包，它必须假设这是新的传输通道，并且发送当前以及存在的通道中所有的缓存内容。</p>
+<p>客户端发送的探测是由<code>ping</code>包类型和<code>probe</code>字符串拼接成的数据。服务端返回的探测是由<code>pong</code>包类型和<code>probe</code>字符串拼接成的数据。</p>
+<p>进一步说，升级只会考虑<code>polling -&gt; x</code>。</p>
+<h3 id="超时时间"><a href="#超时时间" class="headerlink" title="超时时间"></a>超时时间</h3><p>客户端必须使用<code>pingTimeout</code>和<code>pingInterval</code>作为握手的部分（带着<code>open</code>包）来判断服务端是否断开。</p>
+<p>服务端发送一个<code>ping</code>包。如果在<code>pingTimeout</code>之内没有接收到包类型，则服务端会认为socket已经断开连接。如果<code>pong</code>包返回并接收成功的话，服务端会等待<code>pingInterval</code>之后再发送下一个<code>ping</code>包。</p>
+<p>由于两个值在服务端和客户端是共享的，客户端也可以通过它们来判断服务端是否断开连接当它没有在<code>pingTimeout+pingInterval</code>之内收到任何数据。</p>
+<h2 id="SocketIO-Protocol"><a href="#SocketIO-Protocol" class="headerlink" title="SocketIO Protocol"></a>SocketIO Protocol</h2><p>大部分内容引自出处: <a target="_blank" rel="noopener" href="https://www.kevinwu0904.top/blogs/network-socketio/">blog</a>。开源社区介绍 <a target="_blank" rel="noopener" href="https://github.com/socketio/socket.io-protocol">github socket.io</a></p>
+<h3 id="Packet格式"><a href="#Packet格式" class="headerlink" title="Packet格式"></a>Packet格式</h3><p>一个Packet包括以下字段：</p>
+<ul>
+<li>类型（整数，详见下文）</li>
+<li>名称空间（字符串）</li>
+<li>可选字段：Packet内容（对象 | 数组）</li>
+<li>可选字段：ACK的ID（整数）</li>
+</ul>
+<h3 id="Packet类型"><a href="#Packet类型" class="headerlink" title="Packet类型"></a>Packet类型</h3><h4 id="0-CONNECT"><a href="#0-CONNECT" class="headerlink" title="0-CONNECT"></a>0-CONNECT</h4><p>该事件发生时机：</p>
+<ul>
+<li>当客户端连接一个名称空间。客户端会发送一个用于鉴权的payload，例如：</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;nsp&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/admin&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;data&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;token&quot;</span><span class="punctuation">:</span> <span class="string">&quot;123&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>当服务端接受来自一个名称空间的连接。请求成功后，服务端会响应一个带有Socket ID的payload，例如：</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;nsp&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/admin&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;data&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;sid&quot;</span><span class="punctuation">:</span> <span class="string">&quot;CjdVH4TQvovi1VvgAC5Z&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="1-DISCONNECT"><a href="#1-DISCONNECT" class="headerlink" title="1-DISCONNECT"></a>1-DISCONNECT</h4><p>该事件发生在一端想要断开名称空间的连接时。它不包括任何payload和ACK ID，例如：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="number">1</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;nsp&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/admin&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-EVENT"><a href="#2-EVENT" class="headerlink" title="2-EVENT"></a>2-EVENT</h4><p>该事件发生在一端想要给另一端传输数据（不包括二进制数据）时。它包括payload，可能还会包括ACK ID，例如：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="number">2</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;nsp&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;data&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;hello&quot;</span><span class="punctuation">,</span> <span class="number">1</span><span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>包括ACK ID的样例：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="number">2</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;nsp&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/admin&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;data&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;project:delete&quot;</span><span class="punctuation">,</span> <span class="number">123</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="number">456</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="3-ACK"><a href="#3-ACK" class="headerlink" title="3-ACK"></a>3-ACK</h4><p>该事件发生在一端接收到EVENT事件或带有ACK ID的BINARY_EVENT事件。它包括对之前这个事件的ACK ID，可能还会包括payload（不包括二进制数据），例如：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="number">3</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;nsp&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/admin&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;data&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="number">456</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="4-CONNECT-ERROR"><a href="#4-CONNECT-ERROR" class="headerlink" title="4-CONNECT_ERROR"></a>4-CONNECT_ERROR</h4><p>该事件发生在服务端拒绝一个名称空间的连接时。它包括一个”message”字段，可能还会包括一个”data”字段，例如：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="number">4</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;nsp&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/admin&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;data&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;message&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Not authorized&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;data&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;code&quot;</span><span class="punctuation">:</span> <span class="string">&quot;E001&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;label&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Invalid credentials&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="5-BINARY-EVENT"><a href="#5-BINARY-EVENT" class="headerlink" title="5-BINARY_EVENT"></a>5-BINARY_EVENT</h4><p>注意：BINARY_EVENT和BINARY_ACK都用于内建的解析器中，为了区别出包中是否包括二进制内容。它们不会用于其他自定义解析器中。</p>
+<p>该事件发生在一端想要给另一端传输数据（包括二进制数据）时。它包括payload，可能还会包括ACK ID，例如：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="number">5</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;nsp&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;data&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;hello&quot;</span><span class="punctuation">,</span> &lt;Buffer <span class="number">01</span> <span class="number">02</span> <span class="number">03</span>&gt;<span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>包括ACK ID的样例：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="number">5</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;nsp&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/admin&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;data&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;project:delete&quot;</span><span class="punctuation">,</span> &lt;Buffer <span class="number">01</span> <span class="number">02</span> <span class="number">03</span>&gt;<span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="number">456</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="6-BINARY-ACK"><a href="#6-BINARY-ACK" class="headerlink" title="6-BINARY_ACK"></a>6-BINARY_ACK</h4><p>该事件发生在一端接收到EVENT事件或带有ACK ID的BINARY_EVENT事件。它包括对之前这个事件的ACK ID，可能还会包括payload（包括二进制数据），例如：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="number">6</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;nsp&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/admin&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;data&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span>&lt;Buffer <span class="number">03</span> <span class="number">02</span> <span class="number">01</span>&gt;<span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="number">456</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Packet编码"><a href="#Packet编码" class="headerlink" title="Packet编码"></a>Packet编码</h3><p>本小节描述了Socket.IO 客户端和服务端之间默认解析器的编码细节，源码实现参考：<a target="_blank" rel="noopener" href="https://github.com/socketio/socket.io-parser">这里</a>。</p>
+<p>另外注意一点：Socket.IO的packet本质上是Engine.IO<code>message</code>类型的packet（关于Engine.IO参考<a target="_blank" rel="noopener" href="https://github.com/socketio/engine.io-protocol">这里</a>），所以编码结果发送时候会带上<code>4</code>这个数字前缀。（在HTTP long-polling的请求和响应包体中，或者在Websocket的数据帧中。）</p>
+<h4 id="编码格式"><a href="#编码格式" class="headerlink" title="编码格式"></a>编码格式</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;packet type&gt;[&lt;# of binary attachments&gt;-][&lt;namespace&gt;,][&lt;acknowledgment id&gt;][JSON-stringified payload without binary]</span><br><span class="line"></span><br><span class="line">+ binary attachments extracted</span><br></pre></td></tr></table></figure>
+
+<p>注意：</p>
+<ul>
+<li>当名称空间不是默认的<code>/</code>时候才会出现在编码格式中。</li>
+</ul>
+<h4 id="编码样例"><a href="#编码样例" class="headerlink" title="编码样例"></a>编码样例</h4><ul>
+<li><code>/</code>名称空间<code>CONNECT</code></li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;nsp&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;data&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;token&quot;</span><span class="punctuation">:</span> <span class="string">&quot;123&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>编码为：<code>0&#123;&quot;token&quot;:&quot;123&quot;&#125;</code></p>
+<ul>
+<li><code>/admin</code>名称空间的<code>CONNECT</code></li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;nsp&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/admin&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;data&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;token&quot;</span><span class="punctuation">:</span> <span class="string">&quot;123&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>编码为<code>0/admin,&#123;&quot;token&quot;:&quot;123&quot;&#125;</code></p>
+<ul>
+<li><code>/admin</code>名称空间的<code>DISCONNECT</code></li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="number">1</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;nsp&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/admin&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>编码为<code>1/admin</code></p>
+<ul>
+<li><code>EVENT</code></li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="number">2</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;nsp&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;data&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;hello&quot;</span><span class="punctuation">,</span> <span class="number">1</span><span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>编码为<code>2[&quot;hello&quot;,1]</code></p>
+<ul>
+<li>带ACK ID的<code>EVENT</code></li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="number">2</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;nsp&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/admin&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;data&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;project:delete&quot;</span><span class="punctuation">,</span> <span class="number">123</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="number">456</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>编码为<code>2/admin,456[&quot;project:delete&quot;,123]</code></p>
+<ul>
+<li><code>ACK</code></li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="number">3</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;nsp&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/admin&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;data&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="number">456</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>编码为<code>3/admin,456[]</code></p>
+<ul>
+<li><code>CONNECT_ERROR</code></li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="number">4</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;nsp&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/admin&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;data&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;message&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Not authorized&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>编码为<code>4/admin,&#123;&quot;message&quot;:&quot;Not authorized&quot;&#125;</code></p>
+<ul>
+<li><code>BINARY_EVENT</code></li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="number">5</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;nsp&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;data&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;hello&quot;</span><span class="punctuation">,</span> &lt;Buffer <span class="number">01</span> <span class="number">02</span> <span class="number">03</span>&gt;<span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>编码为<code>51-[&quot;hello&quot;,&#123;&quot;_placeholder&quot;:true,&quot;num&quot;:0&#125;] + &lt;Buffer 01 02 03&gt;</code></p>
+<ul>
+<li>带ACK ID的<code>BINARY_EVENT</code></li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="number">5</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;nsp&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/admin&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;data&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;project:delete&quot;</span><span class="punctuation">,</span> &lt;Buffer <span class="number">01</span> <span class="number">02</span> <span class="number">03</span>&gt;<span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="number">456</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>编码为<code>51-/admin,456[&quot;project:delete&quot;,&#123;&quot;_placeholder&quot;:true,&quot;num&quot;:0&#125;] + &lt;Buffer 01 02 03&gt;</code></p>
+<ul>
+<li><code>BINARY_ACK</code></li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="number">6</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;nsp&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/admin&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;data&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span>&lt;Buffer <span class="number">03</span> <span class="number">02</span> <span class="number">01</span>&gt;<span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="number">456</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>编码为<code>61-/admin,456[&#123;&quot;_placeholder&quot;:true,&quot;num&quot;:0&#125;] + &lt;Buffer 03 02 01&gt;</code></p>
+<h3 id="协议交互"><a href="#协议交互" class="headerlink" title="协议交互"></a>协议交互</h3><h4 id="连接名称空间"><a href="#连接名称空间" class="headerlink" title="连接名称空间"></a>连接名称空间</h4><p>对于每个名称空间（包括主名称空间），客户端首先发送一个<code>CONNECT</code>，服务端回复一个带有Socket ID的<code>CONNECT</code>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Client &gt; &#123; type: CONNECT, nsp: &quot;/admin&quot; &#125;</span><br><span class="line">Server &gt; &#123; type: CONNECT, nsp: &quot;/admin&quot;, data: &#123; sid: &quot;wZX3oN0bSVIhsaknAAAI&quot; &#125; &#125; (if the connection is successful)</span><br><span class="line">or</span><br><span class="line">Server &gt; &#123; type: CONNECT_ERROR, nsp: &quot;/admin&quot;, data: &#123; message: &quot;Not authorized&quot; &#125; &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="名称空间断连"><a href="#名称空间断连" class="headerlink" title="名称空间断连"></a>名称空间断连</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Client &gt; &#123; type: DISCONNECT, nsp: &quot;/admin&quot; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>反之亦然。同时另外一端无需任何消息回复。</p>
+<h4 id="ACK"><a href="#ACK" class="headerlink" title="ACK"></a>ACK</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Client &gt; &#123; type: EVENT, nsp: &quot;/admin&quot;, data: [&quot;hello&quot;], id: 456 &#125;</span><br><span class="line">Server &gt; &#123; type: ACK, nsp: &quot;/admin&quot;, data: [], id: 456 &#125;</span><br><span class="line">or</span><br><span class="line">Server &gt; &#123; type: BINARY_ACK, nsp: &quot;/admin&quot;, data: [ &lt;Buffer 01 02 03&gt; ], id: 456 &#125;</span><br></pre></td></tr></table></figure>
+
+<p>反之亦然。</p>
+<h3 id="会话示例-1"><a href="#会话示例-1" class="headerlink" title="会话示例"></a>会话示例</h3><p>这里有一份包括了Socket.IO和Engine.IO的会话示例。</p>
+<ul>
+<li>Request n°1 (open packet)</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GET /socket.io/?EIO=4&amp;transport=polling&amp;t=N8hyd6w</span><br><span class="line">&lt; HTTP/1.1 200 OK</span><br><span class="line">&lt; Content-Type: text/plain; charset=UTF-8</span><br><span class="line">0&#123;&quot;sid&quot;:&quot;lv_VI97HAXpY6yYWAAAC&quot;,&quot;upgrades&quot;:[&quot;websocket&quot;],&quot;pingInterval&quot;:25000,&quot;pingTimeout&quot;:5000&#125;</span><br></pre></td></tr></table></figure>
+
+<p>细节：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0           =&gt; Engine.IO &quot;open&quot; packet type</span><br><span class="line">&#123;&quot;sid&quot;:...  =&gt; the Engine.IO handshake data</span><br></pre></td></tr></table></figure>
+
+<p>注意：参数<code>t</code>用于防止浏览器缓存该请求。</p>
+<ul>
+<li>Request n°2 (namespace connection request)</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">POST /socket.io/?EIO=4&amp;transport=polling&amp;t=N8hyd7H&amp;sid=lv_VI97HAXpY6yYWAAAC</span><br><span class="line">&lt; HTTP/1.1 200 OK</span><br><span class="line">&lt; Content-Type: text/plain; charset=UTF-8</span><br><span class="line">40</span><br></pre></td></tr></table></figure>
+
+<p>细节：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">4           =&gt; Engine.IO &quot;message&quot; packet type</span><br><span class="line">0           =&gt; Socket.IO &quot;CONNECT&quot; packet type</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Request n°3 (namespace connection approval)</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GET /socket.io/?EIO=4&amp;transport=polling&amp;t=N8hyd7H&amp;sid=lv_VI97HAXpY6yYWAAAC</span><br><span class="line">&lt; HTTP/1.1 200 OK</span><br><span class="line">&lt; Content-Type: text/plain; charset=UTF-8</span><br><span class="line">40&#123;&quot;sid&quot;:&quot;wZX3oN0bSVIhsaknAAAI&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Request n°4</li>
+</ul>
+<p>服务端会执行<code>socket.emit(&#39;hey&#39;, &#39;Jude&#39;)</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GET /socket.io/?EIO=4&amp;transport=polling&amp;t=N8hyd7H&amp;sid=lv_VI97HAXpY6yYWAAAC</span><br><span class="line">&lt; HTTP/1.1 200 OK</span><br><span class="line">&lt; Content-Type: text/plain; charset=UTF-8</span><br><span class="line">42[&quot;hey&quot;,&quot;Jude&quot;]</span><br></pre></td></tr></table></figure>
+
+<p>细节：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">4           =&gt; Engine.IO &quot;message&quot; packet type</span><br><span class="line">2           =&gt; Socket.IO &quot;EVENT&quot; packet type</span><br><span class="line">[...]       =&gt; content</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Request n°5 (message out)</li>
+</ul>
+<p>客户端会执行<code>socket.emit(&#39;hello&#39;); socket.emit(&#39;world&#39;);</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">POST /socket.io/?EIO=4&amp;transport=polling&amp;t=N8hzxke&amp;sid=lv_VI97HAXpY6yYWAAAC</span><br><span class="line">&gt; Content-Type: text/plain; charset=UTF-8</span><br><span class="line">42[&quot;hello&quot;]\x1e42[&quot;world&quot;]</span><br><span class="line">&lt; HTTP/1.1 200 OK</span><br><span class="line">&lt; Content-Type: text/plain; charset=UTF-8</span><br><span class="line">ok</span><br></pre></td></tr></table></figure>
+
+<p>细节：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">4           =&gt; Engine.IO &quot;message&quot; packet type</span><br><span class="line">2           =&gt; Socket.IO &quot;EVENT&quot; packet type</span><br><span class="line">[&quot;hello&quot;]   =&gt; the 1st content</span><br><span class="line">\x1e        =&gt; separator</span><br><span class="line">4           =&gt; Engine.IO &quot;message&quot; packet type</span><br><span class="line">2           =&gt; Socket.IO &quot;EVENT&quot; packet type</span><br><span class="line">[&quot;world&quot;]   =&gt; the 2nd content</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Request n°6 (WebSocket upgrade)</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GET /socket.io/?EIO=4&amp;transport=websocket&amp;sid=lv_VI97HAXpY6yYWAAAC</span><br><span class="line">&lt; HTTP/1.1 101 Switching Protocols</span><br></pre></td></tr></table></figure>
+
+<p>WebSocket数据帧：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt; 2probe                                        =&gt; Engine.IO probe request</span><br><span class="line">&gt; 3probe                                        =&gt; Engine.IO probe response</span><br><span class="line">&gt; 5                                             =&gt; Engine.IO &quot;upgrade&quot; packet type</span><br><span class="line">&gt; 42[&quot;hello&quot;]</span><br><span class="line">&gt; 42[&quot;world&quot;]</span><br><span class="line">&gt; 40/admin,                                     =&gt; request access to the admin namespace (Socket.IO &quot;CONNECT&quot; packet)</span><br><span class="line">&lt; 40/admin,&#123;&quot;sid&quot;:&quot;-G5j-67EZFp-q59rADQM&quot;&#125;       =&gt; grant access to the admin namespace</span><br><span class="line">&gt; 42/admin,1[&quot;tellme&quot;]                          =&gt; Socket.IO &quot;EVENT&quot; packet with acknowledgement</span><br><span class="line">&lt; 461-/admin,1[&#123;&quot;_placeholder&quot;:true,&quot;num&quot;:0&#125;]   =&gt; Socket.IO &quot;BINARY_ACK&quot; packet with a placeholder</span><br><span class="line">&lt; &lt;binary&gt;                                      =&gt; the binary attachment (sent in the following frame)</span><br><span class="line">... after a while without message</span><br><span class="line">&gt; 2                                             =&gt; Engine.IO &quot;ping&quot; packet type</span><br><span class="line">&lt; 3                                             =&gt; Engine.IO &quot;pong&quot; packet type</span><br><span class="line">&gt; 1                                             =&gt; Engine.IO &quot;close&quot; packet type</span><br></pre></td></tr></table></figure>
+
+<h2 id="网络电话示例"><a href="#网络电话示例" class="headerlink" title="网络电话示例:"></a>网络电话示例:</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">420[&quot;netPhone&quot;, &#123;msgId: &quot;fe9b9760-0b15-409f-a497-1909e53355d4&quot;, signal: &quot;call&quot;,…&#125;]</span><br><span class="line">430[&#123;msgId: &quot;fe9b9760-0b15-409f-a497-1909e53355d4&quot;, signal: &quot;ack&quot;, content: ,…&#125;]</span><br><span class="line">42[&quot;netPhone&quot;, &#123;msgId: &quot;db2c3741-2029-4cbb-a536-ecd8baf4dbf8&quot;, signal: &quot;call&quot;,…&#125;]</span><br></pre></td></tr></table></figure>
+
+<h3 id=""><a href="#" class="headerlink" title=""></a></h3>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/socketio/" rel="tag"># socketio</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/03/19/shardingsphere/" rel="next" title="shardingsphere">
+                <i class="fa fa-chevron-left"></i> shardingsphere
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#EngineIO-Protocol"><span class="nav-number">1.</span> <span class="nav-text">EngineIO Protocol</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Engine-IO-session%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.1.</span> <span class="nav-text">Engine.IO session详解</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%9A%E8%AF%9D%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.1.1.</span> <span class="nav-text">会话示例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Websocket-%E4%BC%9A%E8%AF%9D%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.1.2.</span> <span class="nav-text">Websocket 会话示例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1"><span class="nav-number">1.2.</span> <span class="nav-text">路由</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E7%A0%81%E6%96%B9%E5%BC%8F"><span class="nav-number">1.3.</span> <span class="nav-text">编码方式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Packet"><span class="nav-number">1.3.1.</span> <span class="nav-text">Packet</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#0-open"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">0 open</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-close"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">1 close</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-ping"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">2 ping</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-pong"><span class="nav-number">1.3.1.4.</span> <span class="nav-text">3 pong</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-message"><span class="nav-number">1.3.1.5.</span> <span class="nav-text">4 message</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-upgrade"><span class="nav-number">1.3.1.6.</span> <span class="nav-text">5 upgrade</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6-noop"><span class="nav-number">1.3.1.7.</span> <span class="nav-text">6 noop</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Payload"><span class="nav-number">1.3.2.</span> <span class="nav-text">Payload</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%A0%E8%BE%93%E6%96%B9%E5%BC%8F"><span class="nav-number">1.4.</span> <span class="nav-text">传输方式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Polling"><span class="nav-number">1.4.1.</span> <span class="nav-text">Polling</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#XHR"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">XHR</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#JSONP"><span class="nav-number">1.4.1.2.</span> <span class="nav-text">JSONP</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Server-sent-events"><span class="nav-number">1.4.2.</span> <span class="nav-text">Server-sent events</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Websocket"><span class="nav-number">1.4.3.</span> <span class="nav-text">Websocket</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%A0%E8%BE%93%E5%8D%87%E7%BA%A7"><span class="nav-number">1.5.</span> <span class="nav-text">传输升级</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B6%85%E6%97%B6%E6%97%B6%E9%97%B4"><span class="nav-number">1.6.</span> <span class="nav-text">超时时间</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SocketIO-Protocol"><span class="nav-number">2.</span> <span class="nav-text">SocketIO Protocol</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Packet%E6%A0%BC%E5%BC%8F"><span class="nav-number">2.1.</span> <span class="nav-text">Packet格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Packet%E7%B1%BB%E5%9E%8B"><span class="nav-number">2.2.</span> <span class="nav-text">Packet类型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#0-CONNECT"><span class="nav-number">2.2.1.</span> <span class="nav-text">0-CONNECT</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-DISCONNECT"><span class="nav-number">2.2.2.</span> <span class="nav-text">1-DISCONNECT</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-EVENT"><span class="nav-number">2.2.3.</span> <span class="nav-text">2-EVENT</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-ACK"><span class="nav-number">2.2.4.</span> <span class="nav-text">3-ACK</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-CONNECT-ERROR"><span class="nav-number">2.2.5.</span> <span class="nav-text">4-CONNECT_ERROR</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-BINARY-EVENT"><span class="nav-number">2.2.6.</span> <span class="nav-text">5-BINARY_EVENT</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-BINARY-ACK"><span class="nav-number">2.2.7.</span> <span class="nav-text">6-BINARY_ACK</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Packet%E7%BC%96%E7%A0%81"><span class="nav-number">2.3.</span> <span class="nav-text">Packet编码</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%96%E7%A0%81%E6%A0%BC%E5%BC%8F"><span class="nav-number">2.3.1.</span> <span class="nav-text">编码格式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%96%E7%A0%81%E6%A0%B7%E4%BE%8B"><span class="nav-number">2.3.2.</span> <span class="nav-text">编码样例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%8F%E8%AE%AE%E4%BA%A4%E4%BA%92"><span class="nav-number">2.4.</span> <span class="nav-text">协议交互</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E5%90%8D%E7%A7%B0%E7%A9%BA%E9%97%B4"><span class="nav-number">2.4.1.</span> <span class="nav-text">连接名称空间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%8D%E7%A7%B0%E7%A9%BA%E9%97%B4%E6%96%AD%E8%BF%9E"><span class="nav-number">2.4.2.</span> <span class="nav-text">名称空间断连</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ACK"><span class="nav-number">2.4.3.</span> <span class="nav-text">ACK</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%9A%E8%AF%9D%E7%A4%BA%E4%BE%8B-1"><span class="nav-number">2.5.</span> <span class="nav-text">会话示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E7%94%B5%E8%AF%9D%E7%A4%BA%E4%BE%8B"><span class="nav-number">3.</span> <span class="nav-text">网络电话示例:</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.1.</span> <span class="nav-text"></span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">谢天帝</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
