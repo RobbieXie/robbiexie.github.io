@@ -91,7 +91,7 @@
 <meta property="og:image" content="https://robbiexie.github.io/2023/04/19/detect-ip/finger1.png">
 <meta property="og:image" content="https://robbiexie.github.io/2023/04/19/detect-ip/finger2.png">
 <meta property="article:published_time" content="2023-04-19T12:19:46.000Z">
-<meta property="article:modified_time" content="2023-04-20T04:25:10.008Z">
+<meta property="article:modified_time" content="2023-04-20T04:27:22.847Z">
 <meta property="article:author" content="谢天帝">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://robbiexie.github.io/2023/04/19/detect-ip/ip-show.png">
@@ -295,7 +295,7 @@
 
       
         <h3 id="浅谈IP归属地检测"><a href="#浅谈IP归属地检测" class="headerlink" title="浅谈IP归属地检测"></a>浅谈IP归属地检测</h3><p>IP归属地检测故名思义, 是通过IP协议中的src地址来确定其所属的地理位置.  通过识别用户IP归属, 可以实现限制地区用户访问(OpenAI)、推荐地区用户喜好、展示评论用户所在城市等功能诉求. 本篇文章, 我们讲一下IP归属地检测的原理及方法, 以及翻墙绕过检测的方法.</p>
-<img src="/2023/04/19/detect-ip/ip-show.png" class="" title="image-20230419220816512">
+<img src="/2023/04/19/detect-ip/ip-show.png" class="" title="b站和微博展示IP属地">
 
 <h3 id="IP协议基础"><a href="#IP协议基础" class="headerlink" title="IP协议基础"></a>IP协议基础</h3><p>首先, 我们重温一下IP协议的基础知识. IP协议位于传统OSI7层模型 (<strong>Open Systems Interconnection model</strong> ) 中的网络层,  负责设备在复杂网络中通信时的寻址addressing、路由routing 等职责. IP协议本身是无状态、无连接、无顺序、不可靠的,  这些特性如需要均要由上层传输层如tcp协议的ack和重传机制保证. IP协议本身不care这些问题, 遇到网络拥堵、路由设备缓冲区满等情况, 均会直接将IP包丢弃.</p>
 <p>目前, IP网络层上层的主流传输层协议仍是 tcp 和 udp协议, 一些新的号称新传输层协议如quic等也是在udp协议上层进行了拓展.  换句话说, 基本上所有的服务端应用本质上均是对 tcp、udp端口的监听,  解析并响应来自客户的请求报文. </p>
@@ -308,7 +308,7 @@
 <p>传输SDP不是WebRTC考虑的问题, 但各端如何获取自己的SDP是其要解决的问题, WebRTC api中, 各端可以获取到本机的网卡ip地址, 并随机一个udp端口来进行后续通信, 如 192.168.1.100 : 65530, 但是, 如果将这个作为SDP发给对端, 对方如果不在同一个子网下, 数据肯定是发送不过来的. 所以WebRTC需要提供能力, 让各端获取自己的公网IP及NAT后的UDP端口. 这套协议便是 STUN协议. </p>
 <p> <a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc5389">Rfc5389</a> 规定了STUN协议细节,  简单总结下来, STUN是一个具备多公网IP的UDP服务, 侦听来自客户的udp请求, 并试图使用不同的ip及端口, 将客户udp  packet的 src ip src port内容原路进行返回. 从而检测客户的公网IP及NAT限制类型(full cone、 ip or port restrict).</p>
 <p>在IP归属地探测场景, 也可以使用该API, 让客户浏览器发送一个UDP包到server, 从而额外检测客户的UDP包IP地址的归属地. 但正如之前所说, 如果客户的udp包也是经由代理发出的, 则也无法检测出真实IP.</p>
-<img src="/2023/04/19/detect-ip/ip-detect.png" class="" title="image-20230420114652496">
+<img src="/2023/04/19/detect-ip/ip-detect.png" class="" title="基于webrtc stun检测udp ip地址">
 
 <h3 id="浏览器指纹-本质上和内网IP没有关系"><a href="#浏览器指纹-本质上和内网IP没有关系" class="headerlink" title="浏览器指纹(本质上和内网IP没有关系)"></a>浏览器指纹(本质上和内网IP没有关系)</h3><img src="/2023/04/19/detect-ip/finger1.png" class="" title="image-20230420111705929">
 
