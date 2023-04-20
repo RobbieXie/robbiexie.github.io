@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="浅谈IP归属地检测IP归属地检测故名思义, 是通过IP协议中的src地址来确定其所属的地理位置.  通过识别用户IP归属, 可以实现限制地区用户访问(OpenAI)、推荐地区用户喜好、展示评论用户所在城市等功能诉求. 本篇文章, 我们讲一下IP归属地检测的原理及方法, 以及翻墙绕过检测的方法.   IP协议基础首先, 我们重温一下IP协议的基础知识. IP协议位于传统OSI7层模型 (Open S">
+<meta property="og:type" content="article">
+<meta property="og:title" content="detect-ip">
+<meta property="og:url" content="https://robbiexie.github.io/2023/04/19/detect-ip/index.html">
+<meta property="og:site_name" content="RobbieXie&#39;s Blog">
+<meta property="og:description" content="浅谈IP归属地检测IP归属地检测故名思义, 是通过IP协议中的src地址来确定其所属的地理位置.  通过识别用户IP归属, 可以实现限制地区用户访问(OpenAI)、推荐地区用户喜好、展示评论用户所在城市等功能诉求. 本篇文章, 我们讲一下IP归属地检测的原理及方法, 以及翻墙绕过检测的方法.   IP协议基础首先, 我们重温一下IP协议的基础知识. IP协议位于传统OSI7层模型 (Open S">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://robbiexie.github.io/2023/04/19/detect-ip/ip-show.png">
+<meta property="og:image" content="https://robbiexie.github.io/2023/04/19/detect-ip/ip-detect.png">
+<meta property="og:image" content="https://robbiexie.github.io/2023/04/19/detect-ip/finger1.png">
+<meta property="og:image" content="https://robbiexie.github.io/2023/04/19/detect-ip/finger2.png">
+<meta property="article:published_time" content="2023-04-19T12:19:46.000Z">
+<meta property="article:modified_time" content="2023-04-20T04:21:48.922Z">
+<meta property="article:author" content="谢天帝">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://robbiexie.github.io/2023/04/19/detect-ip/ip-show.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://robbiexie.github.io/2023/04/19/detect-ip/"/>
+
+
+
+
+
+  <title>detect-ip | RobbieXie's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">RobbieXie's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://robbiexie.github.io/2023/04/19/detect-ip/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="RobbieXie's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">detect-ip</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2023-04-19T20:19:46+08:00">
+                2023-04-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="浅谈IP归属地检测"><a href="#浅谈IP归属地检测" class="headerlink" title="浅谈IP归属地检测"></a>浅谈IP归属地检测</h2><p>IP归属地检测故名思义, 是通过IP协议中的src地址来确定其所属的地理位置.  通过识别用户IP归属, 可以实现限制地区用户访问(OpenAI)、推荐地区用户喜好、展示评论用户所在城市等功能诉求. 本篇文章, 我们讲一下IP归属地检测的原理及方法, 以及翻墙绕过检测的方法.</p>
+<img src="/2023/04/19/detect-ip/ip-show.png" class="" title="image-20230419220816512">
+
+<h3 id="IP协议基础"><a href="#IP协议基础" class="headerlink" title="IP协议基础"></a>IP协议基础</h3><p>首先, 我们重温一下IP协议的基础知识. IP协议位于传统OSI7层模型 (<strong>Open Systems Interconnection model</strong> ) 中的网络层,  负责设备在复杂网络中通信时的寻址addressing、路由routing 等职责. IP协议本身是无状态、无连接、无顺序、不可靠的,  这些特性如需要均要由上层传输层如tcp协议的ack和重传机制保证. IP协议本身不care这些问题, 遇到网络拥堵、路由设备缓冲区满等情况, 均会直接将IP包丢弃.</p>
+<p>目前, IP网络层上层的主流传输层协议仍是 tcp 和 udp协议, 一些新的号称新传输层协议如quic等也是在udp协议上层进行了拓展.  换句话说, 基本上所有的服务端应用本质上均是对 tcp、udp端口的监听,  解析并响应来自客户的请求报文. </p>
+<p>不管是tcp还是udp, 由于底层都是IP协议. 在发送报文时, 客户端都会在IP层报文携带src(本机ip 192.168.1.100)和dest ip地址(内网or公网).  dest ip 会经由路由器层层寻址交由下次网关路由, 而src ip 也会在途径WAN网关时, NAT至公网IP地址. 公网IP的IP包不会再被修改, 并会经过路由表逐跳层层寻址最终抵达目标设备, 可能是一个F5、一个用户PC等, 这个过程不再详细分析了.  最终, 其实服务端可以很轻松的拿到客户请求中的公网src ip, 这个src ip最多是个代理, 但是是不会造假的, 因为造假的话服务端的响应回传client就接收不到了.</p>
+<h3 id="翻墙代理"><a href="#翻墙代理" class="headerlink" title="翻墙代理"></a>翻墙代理</h3><p>翻墙代理目前基本也是两大类, 一类是VPN, 一类是VPS.  前者是用虚拟网卡+隧道, 后者是代理服务+数据加密.  前者功能更丰富, 对server端的要求更高, 出于成本角度, 只为了翻墙基本都是采用VPS+部署代理服务.</p>
+<p>VPS就是一台境外ip、且未被墙的虚机, 可供国内ip访问连接, 并且部署了代理服务.  代理服务也有很多种, 提供的代理能力也分369等, 有只代理http的, 只代理tcp的, 也有tcp + udp均可代理的.  如果是自己搭的vps, 就可以安装个支持tcp+udp的代理, 一般直接买的SaaS多节点代理服务, 通常只支持http or tcp请求代理.</p>
+<h3 id="浏览器UDP通信"><a href="#浏览器UDP通信" class="headerlink" title="浏览器UDP通信"></a>浏览器UDP通信</h3><p>早期浏览器网页内容均由基于tcp的http1.1/2协议或 websocket协议提供, 这种场景下, 只要用户开个具备http or tcp代理能力的翻墙软件, 再在浏览器装个http代理插件, 即可隐藏自己国内ip. 但随着浏览器对http3 QUIC和webrtc api的支持, 浏览器逐步开始向udp通信变迁. 浏览器udp通信时, 如果你只将tcp包交由代理转发, 对端sever拿到的client src ip 自然还是你的udp本地出局ip.</p>
+<p>尽管如此, 对于使用了http3 QUIC和 WebRTC的网站来说, 如果想隐藏自己的大陆ip, 也只要把代理服务升级下, 让UDP包也经由代理转发路由即可. 因为不管是tcp还是udp, 只要让对应的网络层ip数据包经由代理的境外IP发出即可解决问题.</p>
+<h3 id="WebRTC-STUN协议"><a href="#WebRTC-STUN协议" class="headerlink" title="WebRTC STUN协议"></a>WebRTC STUN协议</h3><p>WebRTC是基于UDP的浏览器即时通讯模块, 通过浏览器的WebRTC api, 可以实现P2P端到端的实时数据通信, 目前已经广泛用于视频会议、文件数据传输、IM等场景.  WebRTC可以实现网络互通的任意两台设备的P2P通信, 比如, 属于同一内网的两台内网pc、或均支持公网udp通信的两台互联网PC. 做P2P通信前, 首先要知道对方的 IP地址 &amp; UDP通信端口( SDP session description protocol). WebRTC中对如何获取对方的SDP信息不做要求, 本端可以先获取到自身的IP及端口信息, 再通过自研一套IM信令互相通知, 甚至可以直接微信聊天发送给对方. 只要知道互相知道了对端SDP, 便可进行通信.</p>
+<p>传输SDP不是WebRTC考虑的问题, 但各端如何获取自己的SDP是其要解决的问题, WebRTC api中, 各端可以获取到本机的网卡ip地址, 并随机一个udp端口来进行后续通信, 如 192.168.1.100 : 65530, 但是, 如果将这个作为SDP发给对端, 对方如果不在同一个子网下, 数据肯定是发送不过来的. 所以WebRTC需要提供能力, 让各端获取自己的公网IP及NAT后的UDP端口. 这套协议便是 STUN协议. </p>
+<p> <a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc5389">Rfc5389</a> 规定了STUN协议细节,  简单总结下来, STUN是一个具备多公网IP的UDP服务, 侦听来自客户的udp请求, 并试图使用不同的ip及端口, 将客户udp  packet的 src ip src port内容原路进行返回. 从而检测客户的公网IP及NAT限制类型(full cone、 ip or port restrict).</p>
+<p>在IP归属地探测场景, 也可以使用该API, 让客户浏览器发送一个UDP包到server, 从而额外检测客户的UDP包IP地址的归属地. 但正如之前所说, 如果客户的udp包也是经由代理发出的, 则也无法检测出真实IP.</p>
+<img src="/2023/04/19/detect-ip/ip-detect.png" class="" title="image-20230420114652496">
+
+<h3 id="浏览器指纹-本质上和内网IP没有关系"><a href="#浏览器指纹-本质上和内网IP没有关系" class="headerlink" title="浏览器指纹(本质上和内网IP没有关系)"></a>浏览器指纹(本质上和内网IP没有关系)</h3><img src="/2023/04/19/detect-ip/finger1.png" class="" title="image-20230420111705929">
+
+<img src="/2023/04/19/detect-ip/finger2.png" class="" title="image-20230420111619912">
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/05/18/socketio/" rel="next" title="socketio">
+                <i class="fa fa-chevron-left"></i> socketio
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%85%E8%B0%88IP%E5%BD%92%E5%B1%9E%E5%9C%B0%E6%A3%80%E6%B5%8B"><span class="nav-number">1.</span> <span class="nav-text">浅谈IP归属地检测</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#IP%E5%8D%8F%E8%AE%AE%E5%9F%BA%E7%A1%80"><span class="nav-number">1.1.</span> <span class="nav-text">IP协议基础</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BF%BB%E5%A2%99%E4%BB%A3%E7%90%86"><span class="nav-number">1.2.</span> <span class="nav-text">翻墙代理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8F%E8%A7%88%E5%99%A8UDP%E9%80%9A%E4%BF%A1"><span class="nav-number">1.3.</span> <span class="nav-text">浏览器UDP通信</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WebRTC-STUN%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.4.</span> <span class="nav-text">WebRTC STUN协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8F%E8%A7%88%E5%99%A8%E6%8C%87%E7%BA%B9-%E6%9C%AC%E8%B4%A8%E4%B8%8A%E5%92%8C%E5%86%85%E7%BD%91IP%E6%B2%A1%E6%9C%89%E5%85%B3%E7%B3%BB"><span class="nav-number">1.5.</span> <span class="nav-text">浏览器指纹(本质上和内网IP没有关系)</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">谢天帝</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
